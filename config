@@ -1,0 +1,9 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "live"]
+	url = ssh://ubuntu@172.31.4.227/var/Sera/Sera.git
+	fetch = +refs/heads/*:refs/remotes/live/*
