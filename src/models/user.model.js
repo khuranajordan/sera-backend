@@ -35,6 +35,28 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
+
+    mobile: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: {
+        validator: (value) => {
+          return /^[0-9]{10}$/.test(value);
+        },
+        message: 'Invalid mobile number. Mobile number must contain exactly 10 digits.',
+      },
+    },
+    confirmPassword: {
+      type: String,
+      // required: true,
+      trim: true,
+      validate(value) {
+        if (value !== this.password) {
+          throw new Error('Passwords do not match');
+        }
+      },
+    },
     role: {
       type: String,
       enum: roles,

@@ -8,10 +8,22 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
+  const { password, confirmPassword, mobile, ...rest } = userBody;
+
+  if (password !== confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match');
+  }
+
+  if (await User.isEmailTaken(rest.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  return User.create(userBody);
+
+  if (!/^[0-9]{10}$/.test(mobile)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid mobile number. Mobile number must contain exactly 10 digits.');
+  }
+
+  const user = await User.create({ ...rest, password, mobile });
+  return user;
 };
 
 /**
