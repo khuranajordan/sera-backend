@@ -1,5 +1,7 @@
 const allRoles = {
     user: [],
+    parent: [],
+    child: [],
     admin: ['getUsers', 'manageUsers'],
 }
 
