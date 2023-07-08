@@ -11,7 +11,7 @@ router.post(
     validate(authValidation.register),
     authController.register
 )
-router.get('/login', (req, res) => res.send('Another node update'))
+router.get('/login', (req, res) => res.send('After pm2 update'))
 router.post('/login', validate(authValidation.login), authController.login)
 router.post('/logout', validate(authValidation.logout), authController.logout)
 router.post(
