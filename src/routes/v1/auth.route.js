@@ -314,3 +314,10 @@ module.exports = router
  *               code: 401
  *               message: verify email failed
  */
+
+// HOME=/home/ubuntu
+// LOGNAME=ubuntu
+// PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+// LANG=C.UTF-8
+// SHELL=/bin/sh
+// PWD=/home/ubuntu
