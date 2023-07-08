@@ -37,7 +37,13 @@ const userSchema = mongoose.Schema(
             },
             private: true, // used by the toJSON plugin
         },
-
+        passcode: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+            default: generatePasscode,
+        },
         mobile: {
             type: String,
             required: true,
@@ -48,16 +54,6 @@ const userSchema = mongoose.Schema(
                 },
                 message:
                     'Invalid mobile number. Mobile number must contain exactly 10 digits.',
-            },
-        },
-        confirmPassword: {
-            type: String,
-            // required: true,
-            trim: true,
-            validate(value) {
-                if (value !== this.password) {
-                    throw new Error('Passwords do not match')
-                }
             },
         },
         role: {
@@ -78,6 +74,17 @@ const userSchema = mongoose.Schema(
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON)
 userSchema.plugin(paginate)
+
+function generatePasscode() {
+    const passcodeLength = 6
+    const digits = '0123456789'
+    let passcode = ''
+    for (let i = 0; i < passcodeLength; i++) {
+        const randomIndex = Math.floor(Math.random() * digits.length)
+        passcode += digits[randomIndex]
+    }
+    return passcode
+}
 
 /**
  * Check if email is taken

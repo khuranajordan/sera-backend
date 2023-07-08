@@ -1,46 +1,47 @@
-const express = require('express')
-const validate = require('../../middlewares/validate')
-const authValidation = require('../../validations/auth.validation')
-const authController = require('../../controllers/auth.controller')
-const auth = require('../../middlewares/auth')
+const express = require('express');
+const validate = require('../../middlewares/validate');
+const authValidation = require('../../validations/auth.validation');
+const authController = require('../../controllers/auth.controller');
+const auth = require('../../middlewares/auth');
 
-const router = express.Router()
+const router = express.Router();
 
 router.post(
-    '/register',
-    validate(authValidation.register),
-    authController.register
-)
-router.get('/login', (req, res) => res.send('UPPDATEDDD'))
-router.post('/login', validate(authValidation.login), authController.login)
-router.post('/logout', validate(authValidation.logout), authController.logout)
+  '/register',
+  validate(authValidation.register),
+  authController.register,
+);
+router.get('/user/:passcode', authController.getUserPasscode);
+router.get('/login', (req, res) => res.send('UPPDATEDDD'));
+router.post('/login', validate(authValidation.login), authController.login);
+router.post('/logout', validate(authValidation.logout), authController.logout);
 router.post(
-    '/refresh-tokens',
-    validate(authValidation.refreshTokens),
-    authController.refreshTokens
-)
+  '/refresh-tokens',
+  validate(authValidation.refreshTokens),
+  authController.refreshTokens,
+);
 router.post(
-    '/forgot-password',
-    validate(authValidation.forgotPassword),
-    authController.forgotPassword
-)
+  '/forgot-password',
+  validate(authValidation.forgotPassword),
+  authController.forgotPassword,
+);
 router.post(
-    '/reset-password',
-    validate(authValidation.resetPassword),
-    authController.resetPassword
-)
+  '/reset-password',
+  validate(authValidation.resetPassword),
+  authController.resetPassword,
+);
 router.post(
-    '/send-verification-email',
-    auth(),
-    authController.sendVerificationEmail
-)
+  '/send-verification-email',
+  auth(),
+  authController.sendVerificationEmail,
+);
 router.post(
-    '/verify-email',
-    validate(authValidation.verifyEmail),
-    authController.verifyEmail
-)
+  '/verify-email',
+  validate(authValidation.verifyEmail),
+  authController.verifyEmail,
+);
 
-module.exports = router
+module.exports = router;
 
 /**
  * @swagger
