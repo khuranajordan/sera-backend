@@ -19,6 +19,14 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   return user;
 };
 
+const loginUserWithMobileAndPassword = async (mobile, password) => {
+  const user = await userService.getUserByMobile(mobile);
+  if (!user || !(await user.isPasswordMatch(password))) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Credentials');
+  }
+  return user;
+};
+
 /**
  * Logout
  * @param {string} refreshToken
@@ -108,6 +116,7 @@ const verifyEmail = async verifyEmailToken => {
 
 module.exports = {
   loginUserWithEmailAndPassword,
+  loginUserWithMobileAndPassword,
   logout,
   refreshAuth,
   resetPassword,

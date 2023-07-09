@@ -13,6 +13,7 @@ const register = {
 const login = {
   body: Joi.object().keys({
     email: Joi.string().optional(),
+    mobile: Joi.string().optional(),
     password: Joi.string().required(),
   }),
 };
