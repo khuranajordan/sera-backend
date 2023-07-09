@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
       trim: true,
       lowercase: true,
       validate(value) {
@@ -46,6 +45,7 @@ const userSchema = mongoose.Schema(
     mobile: {
       type: String,
       required: true,
+      unique: true,
       trim: true,
       validate: {
         validator: value => {
@@ -94,6 +94,11 @@ function generatePasscode() {
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({email, _id: {$ne: excludeUserId}});
   return !!user;
+};
+
+userSchema.statics.isMobileTaken = async function (mobile, excludeUserId) {
+  const user = await this.findOne({mobile: mobile, _id: {$ne: excludeUserId}});
+  return user;
 };
 
 /**

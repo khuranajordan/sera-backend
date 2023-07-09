@@ -10,8 +10,14 @@ const ApiError = require('../utils/ApiError');
 const createUser = async userBody => {
   const {password, mobile, ...rest} = userBody;
 
-  if (await User.isEmailTaken(rest.email)) {
+  if (rest.email && (await User.isEmailTaken(rest.email))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  if (mobile && (await User.isMobileTaken(mobile))) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Mobile Number already registerd',
+    );
   }
 
   if (!/^[0-9]{10}$/.test(mobile)) {
