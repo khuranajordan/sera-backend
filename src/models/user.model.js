@@ -42,6 +42,10 @@ const userSchema = mongoose.Schema(
       trim: true,
       default: generatePasscode,
     },
+    userisparent: {
+      type: Boolean, // true = parents, false = child
+
+    },
     mobile: {
       type: String,
       required: true,
