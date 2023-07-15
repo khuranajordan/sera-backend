@@ -14,9 +14,9 @@ const decryptPass = encryptedPassword => {
 
 const create = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, userisparent, mobile } = req.body;
+    const { name, email, password, confirmPassword, userisparent, mobile,isEmailVerified } = req.body;
 
-    if (!name || !email || !password || !confirmPassword || !userisparent || !mobile) {
+    if (!name || !email || !password || !confirmPassword || !userisparent || !mobile || !isEmailVerified) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
