@@ -1,7 +1,5 @@
-const {json} = require('express');
-const {User} = require('../models');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
 // Define the decryptPass function
 const decryptPass = encryptedPassword => {
@@ -16,68 +14,102 @@ const decryptPass = encryptedPassword => {
 
 const create = async (req, res) => {
   try {
-    const {name, email, password, confirmPassword, userisparent, mobile} =
-      req.body;
+    const { name, email, password, confirmPassword, userisparent, mobile } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      !userisparent ||
-      !mobile
-    ) {
-      return res.status(400).json({message: 'All fields are required'});
+    if (!name || !email || !password || !confirmPassword || !userisparent || !mobile) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
+
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
-      return res.status(400).json({message: 'Passwords do not match'});
+      return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    var user = await User.create({
+    const user = await User.create({
       name,
       email,
       password,
       confirmPassword,
       userisparent,
       mobile,
+      isEmailVerified
     });
 
-    var token = await jwt.sign(user.id, 'abcdefghijklmn');
+    const token = jwt.sign(user.id, 'abcdefghijklmn');
 
-    user = user.toJSON();
-    user.token = token;
-    return res.status(200).json({message: 'User created successfully', user});
+    const response = {
+      code: 200,
+      message: 'User created successfully',
+      user: {
+        ...user.toJSON(),
+        token: token,
+      },
+    };
+
+    return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(404).json(error.message);
+    return res.status(404).json({ message: error.message });
   }
 };
 
 const login = async (req, res) => {
   try {
-    let {mobile, userisparent, password} = req.body;
-    var data = await User.findOne({mobile});
-    if (!data) {
-      return res.status(202).json({message: 'mobile number is not found'});
+    const { mobile, userisparent, password } = req.body;
+    const user = await User.findOne({ mobile });
+
+    if (!user) {
+      return res.status(202).json({ message: 'Mobile number is not found' });
     }
 
-    if (!data || !(await data.isPasswordMatch(password))) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, 'password does not match');
+    const isMatch = await user.isPasswordMatch(password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Password does not match' });
     }
 
-    let token = await jwt.sign(data.id, 'abcdefghijklmn');
-    token = token.token;
-    data = data.toJSON();
-    data.token = token;
-    return res.status(200).json({message: 'login successfully', data});
+    const token = jwt.sign(user.id, 'abcdefghijklmn');
+
+    const response = {
+      code: 200,
+      message: 'Login successful',
+      data: {
+        ...user.toJSON(),
+        token: token,
+      },
+    };
+
+    return res.status(200).json(response);
   } catch (error) {
-    console.log(error.message, 'in catch');
-    return res.status(400).json(error.message);
+    console.log(error.message, 'error');
+    return res.status(400).json({ message: error.message });
   }
 };
+
+const getCred = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    const response = {
+      code: 200,
+      message: 'success',
+      data: users,
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error.message, 'error');
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
 module.exports = {
   create,
   login,
+  getCred,
 };
