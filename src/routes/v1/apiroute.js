@@ -10,6 +10,8 @@ const { create,
     pairChildDevice,
     forgetpassword,
     reset_password,
+    createPackage,
+    getPackages,
     getSubscription,
     postSubscription
  } = require('../../controllers/apicontroller');
@@ -22,6 +24,8 @@ router.route('/generatePairingCode').post(generatePairingCode);
 router.route('/pairChildDevice').post(pairChildDevice);
 router.route('/forgetpassword').post(forgetpassword);
 router.route('/reset_password').post(reset_password);
+router.route('/createPackage').post(createPackage);
+router.route('/getPackages').post(getPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 

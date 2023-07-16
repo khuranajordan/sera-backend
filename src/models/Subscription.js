@@ -1,42 +1,32 @@
-// subscription.js
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const subscriptionSchema = new Schema({
-  deviceId: {
-    type: String,
-    required: true,
-  },
-  parentId: {
-    type: String,
-    required: true,
-  },
   packageId: {
-    type: Number,
-    required: true,
-  },
-  packageName: {
     type: String,
     required: true,
   },
-  packageDetails: {
+  promoCode: {
     type: String,
     required: true,
   },
-  price: {
+  totalAmount: {
     type: Number,
     required: true,
   },
-  numberOfDays: {
+  packageAmount: {
     type: Number,
     required: true,
   },
-  isPromoCode: {
-    type: Boolean,
+  duration: {
+    type: Number,
+    required: true,
+  },
+  maxDevices: {
+    type: Number,
     required: true,
   },
 });
-
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema);
 

@@ -2,7 +2,7 @@ const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const { ParentDevice } = require('../models/parentDevice');
 const { child } = require('../models/child');
-
+const PackageModel = require('../models/package.model')
 // Define the decryptPass function
 const decryptPass = encryptedPassword => {
   // Implement your decryption logic here, for example using bcrypt
@@ -233,29 +233,51 @@ const reset_password = async (req, res) => {
 };
 
 
+const createPackage = async (req, res) => {
+  try {
+    const { price, numberOfDays, isPromoCode, packageId, packageName, packageDetails } = req.body;
+    const newPackage = new PackageModel({
+      price,
+      numberOfDays,
+      isPromoCode,
+      packageId,
+      packageName,
+      packageDetails,
+    });
 
+    // Save the new package document to the database
+    const savedPackage = await newPackage.save();
+    res.status(201).json({
+      status: 201,
+      message: 'Package created successfully',
+      package: savedPackage,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error creating package',
+      error: err.message,
+    });
+  }
+};
 
-const getSubscribedPackages = async (deviceId, parentId) => {
-  // You can implement the logic to fetch the subscribed packages from your database using the deviceId and parentId
-  // Here, we'll provide a sample response for demonstration purposes
-  return [
-    {
-      price:99,
-      numberOfDays:30,
-      isPromoCode:false,
-      packageId: 737373,
-      packageName: 'quarterly50% off',
-      packageDetails: 'In this package, you can only add four devices...',
-    },
-    {
-      price:99,
-      numberOfDays:30,
-      isPromoCode:true,
-      packageId: 737374,
-      packageName: 'single50% off',
-      packageDetails: 'In this package, you can only add a single device...',
-    },
-  ];
+const getPackages = async (req, res) => {
+  try {
+    // Retrieve all packages from the database
+    const packages = await PackageModel.find();
+
+    res.status(200).json({
+      status: 200,
+      message: 'Packages retrieved successfully',
+      packages: packages,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      message: 'Error retrieving packages',
+      error: err.message,
+    });
+  }
 };
 
 const getSubscription = async (req, res) => {
@@ -279,10 +301,37 @@ const getSubscription = async (req, res) => {
 };
 
 const calculateSubscriptionAmount = async (packageId, promoCode) => {
+  const subscriptionPlans = {
+    monthly: { duration: 30, price: 600, maxDevices: 1 },
+    quarterly: { duration: 90, price: 3000, maxDevices: 2 },
+    yearly: { duration: 365, price: 6000, maxDevices: 4 },
+  };
+
+  if (!(packageId in subscriptionPlans)) {
+    throw new Error('Invalid packageId: ' + packageId);
+  }
+
+  let durationIncrease = 0;
+  const validPromoCodes = Array.from({ length: 91 }, (_, i) => `sera${String(10 + i).padStart(3, '0')}`);
+  if (validPromoCodes.includes(promoCode)) {
+    if (packageId === 'quarterly') {
+      durationIncrease = 30;
+    } else if (packageId === 'yearly') {
+      durationIncrease = 180;
+    }
+  } else {
+    throw new Error('Invalid promoCode: ' + promoCode);
+  }
+
+  const { duration, price, maxDevices } = subscriptionPlans[packageId];
+  const totalAmount = price;
+  const updatedDuration = duration + durationIncrease;
+
   return {
-    totalAmount: 80,
-    packageAmount: 100,
-    discountAmount: 20,
+    totalAmount,
+    packageAmount: price,
+    duration: updatedDuration,
+    maxDevices,
   };
 };
 
@@ -290,22 +339,26 @@ const postSubscription = async (req, res) => {
   try {
     const { packageId, promoCode } = req.body;
 
-    const { totalAmount, packageAmount, discountAmount } = await calculateSubscriptionAmount(packageId, promoCode);
+    const { totalAmount, packageAmount, duration, maxDevices } = await calculateSubscriptionAmount(packageId, promoCode);
     res.status(200).json({
       status: 200,
       message: 'success',
-      totalAmount: totalAmount,
-      packageAmount: packageAmount,
-      discountAmount: discountAmount,
+      totalAmount,
+      packageAmount,
+      duration,
+      maxDevices,
     });
   } catch (err) {
-    res.status(500).json({
-      status: 500,
+    res.status(400).json({
+      status: 400,
       message: 'Error while processing subscription.',
       error: err.message,
     });
   }
 };
+
+
+
 
 module.exports = {
   create,
@@ -315,6 +368,8 @@ module.exports = {
   pairChildDevice,
   forgetpassword,
   reset_password,
+  createPackage,
+  getPackages,
   getSubscription,
   postSubscription
 };
