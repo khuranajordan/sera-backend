@@ -240,11 +240,17 @@ const getSubscribedPackages = async (deviceId, parentId) => {
   // Here, we'll provide a sample response for demonstration purposes
   return [
     {
+      price:99,
+      numberOfDays:30,
+      isPromoCode:false,
       packageId: 737373,
       packageName: 'quarterly50% off',
       packageDetails: 'In this package, you can only add four devices...',
     },
     {
+      price:99,
+      numberOfDays:30,
+      isPromoCode:true,
       packageId: 737374,
       packageName: 'single50% off',
       packageDetails: 'In this package, you can only add a single device...',
