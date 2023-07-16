@@ -13,11 +13,9 @@ const { create,
     getSubscription,
     postSubscription
  } = require('../../controllers/apicontroller');
-
 const router = express.Router();
 
 router.route('/create').post(create);
-
 router.route('/login').post(login);
 router.route('/getCred').get(getCred);
 router.route('/generatePairingCode').post(generatePairingCode);

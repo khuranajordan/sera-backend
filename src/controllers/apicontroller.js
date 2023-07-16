@@ -16,7 +16,7 @@ const decryptPass = encryptedPassword => {
 
 const create = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, userisparent, mobile,isEmailVerified } = req.body;
+    const { name, email, password, confirmPassword, userisparent, mobile, isEmailVerified } = req.body;
 
     if (!name || !email || !password || !confirmPassword || !userisparent || !mobile || !isEmailVerified) {
       return res.status(400).json({ message: 'All fields are required' });
@@ -25,6 +25,11 @@ const create = async (req, res) => {
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    // Check if password length is less than 8 characters
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
     }
 
     const user = await User.create({
@@ -55,13 +60,18 @@ const create = async (req, res) => {
   }
 };
 
+
 const login = async (req, res) => {
   try {
     const { mobile, userisparent, password } = req.body;
     const user = await User.findOne({ mobile });
-
     if (!user) {
       return res.status(202).json({ message: 'Mobile number is not found' });
+    }
+
+    // Check if password length is less than 8 characters
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
     }
 
     const isMatch = await user.isPasswordMatch(password);
@@ -87,6 +97,7 @@ const login = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
 
 const getCred = async (req, res) => {
   try {
@@ -188,33 +199,39 @@ const forgetpassword = async(req,res)=>{
   }
 }
 
-const reset_password = async(req,res)=>{
+const reset_password = async (req, res) => {
   try {
     // Find the user by mobile
-    let {mobile,newPassword } = req.body
-    const user = await User.findOne({ mobile:mobile });
+    let { mobile, newPassword } = req.body;
+
+    // Check if password length is less than 8 characters
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
+    }
+
+    const user = await User.findOne({ mobile });
 
     // If the user with the provided mobile number doesn't exist, return an error
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-   
+
     // Update the user's password in the database
     user.password = newPassword;
-    
+
     await user.save();
 
     const response = {
-      "status": 200,
-      "message": "Success",
-    }
-    return res.status(200).json(response)
-    
+      status: 200,
+      message: 'Success',
+    };
+    return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(500).json( error.message );
+    return res.status(500).json(error.message);
   }
-}
+};
+
 
 
 
@@ -256,7 +273,6 @@ const getSubscription = async (req, res) => {
 };
 
 const calculateSubscriptionAmount = async (packageId, promoCode) => {
-
   return {
     totalAmount: 80,
     packageAmount: 100,
@@ -269,7 +285,6 @@ const postSubscription = async (req, res) => {
     const { packageId, promoCode } = req.body;
 
     const { totalAmount, packageAmount, discountAmount } = await calculateSubscriptionAmount(packageId, promoCode);
-
     res.status(200).json({
       status: 200,
       message: 'success',
