@@ -198,8 +198,6 @@ const reset_password = async(req,res)=>{
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Verify the old password
    
     // Update the user's password in the database
     user.password = newPassword;
@@ -218,6 +216,76 @@ const reset_password = async(req,res)=>{
   }
 }
 
+
+
+const getSubscribedPackages = async (deviceId, parentId) => {
+  // You can implement the logic to fetch the subscribed packages from your database using the deviceId and parentId
+  // Here, we'll provide a sample response for demonstration purposes
+  return [
+    {
+      packageId: 737373,
+      packageName: 'quarterly50% off',
+      packageDetails: 'In this package, you can only add four devices...',
+    },
+    {
+      packageId: 737374,
+      packageName: 'single50% off',
+      packageDetails: 'In this package, you can only add a single device...',
+    },
+  ];
+};
+
+const getSubscription = async (req, res) => {
+  try {
+    const { deviceId, parentId } = req.body;
+
+    // Assuming you have a function to retrieve the subscribed packages based on the parentId and deviceId
+    const packages = await getSubscribedPackages(deviceId, parentId);
+    res.status(200).json({
+      status: 200,
+      message: 'success',
+      packages: packages,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      message: 'Error while fetching subscriptions.',
+      error: err.message,
+    });
+  }
+};
+
+const calculateSubscriptionAmount = async (packageId, promoCode) => {
+
+  return {
+    totalAmount: 80,
+    packageAmount: 100,
+    discountAmount: 20,
+  };
+};
+
+const postSubscription = async (req, res) => {
+  try {
+    const { packageId, promoCode } = req.body;
+
+    const { totalAmount, packageAmount, discountAmount } = await calculateSubscriptionAmount(packageId, promoCode);
+
+    res.status(200).json({
+      status: 200,
+      message: 'success',
+      totalAmount: totalAmount,
+      packageAmount: packageAmount,
+      discountAmount: discountAmount,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      message: 'Error while processing subscription.',
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   create,
   login,
@@ -225,5 +293,7 @@ module.exports = {
   generatePairingCode,
   pairChildDevice,
   forgetpassword,
-  reset_password
+  reset_password,
+  getSubscription,
+  postSubscription
 };
