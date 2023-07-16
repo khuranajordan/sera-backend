@@ -25,7 +25,7 @@ router.route('/pairChildDevice').post(pairChildDevice);
 router.route('/forgetpassword').post(forgetpassword);
 router.route('/reset_password').post(reset_password);
 router.route('/createPackage').post(createPackage);
-router.route('/getPackages').post(getPackages);
+router.route('/getPackages').get(getPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
