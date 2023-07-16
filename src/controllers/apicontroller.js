@@ -261,7 +261,7 @@ const createPackage = async (req, res) => {
   }
 };
 
-const getPackages = async (req, res) => {
+const getSubscribedPackages = async (req, res) => {
   try {
     // Retrieve all packages from the database
     const packages = await PackageModel.find();
@@ -369,7 +369,7 @@ module.exports = {
   forgetpassword,
   reset_password,
   createPackage,
-  getPackages,
+  getSubscribedPackages,
   getSubscription,
   postSubscription
 };
