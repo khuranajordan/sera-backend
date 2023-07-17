@@ -156,16 +156,12 @@ const pairChildDevice = async(req, res)=>{
       res.status(404).json({ error: 'Parent device not found' });
       return;
     }
-    
-    // Save the child app data with the parent's device ID and pairing code
     const childApp = new child({
       pairingCode: pairing_code,
       deviceid,
       age: req.body.age
     });
     await childApp.save();
-    
-    // Prepare the response JSON
     const response = {
       "status": 200,
       "message": "Success",
@@ -201,22 +197,18 @@ const forgetpassword = async(req,res)=>{
 
 const reset_password = async (req, res) => {
   try {
-    // Find the user by mobile
     let { mobile, newPassword } = req.body;
 
-    // Check if password length is less than 8 characters
     if (newPassword.length < 8) {
       return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
     }
 
     const user = await User.findOne({ mobile });
 
-    // If the user with the provided mobile number doesn't exist, return an error
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update the user's password in the database
     user.password = newPassword;
 
     await user.save();
@@ -232,6 +224,15 @@ const reset_password = async (req, res) => {
   }
 };
 
+
+const fetchSubscribedPackages = async (deviceId, parentId) => {
+  try {
+    const subscribedPackages = await PackageModel.find({ deviceId, parentId });
+    return subscribedPackages;
+  } catch (err) {
+    throw new Error('Error fetching subscribed packages: ' + err.message);
+  }
+};
 
 const createPackage = async (req, res) => {
   try {
@@ -261,34 +262,19 @@ const createPackage = async (req, res) => {
   }
 };
 
-const getSubscribedPackages = async (req, res) => {
-  try {
-    // Retrieve all packages from the database
-    const packages = await PackageModel.find();
-
-    res.status(200).json({
-      status: 200,
-      message: 'Packages retrieved successfully',
-      packages: packages,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 500,
-      message: 'Error retrieving packages',
-      error: err.message,
-    });
-  }
+const getSubscribedPackages = async (deviceId, parentId) => {
+  const packages = await fetchSubscribedPackages(deviceId, parentId);
+  return packages;
 };
 
 const getSubscription = async (req, res) => {
   try {
-    const { deviceId, parentId } = req.body;
+    const { deviceId, parentId } = req.query;
 
-    // Assuming you have a function to retrieve the subscribed packages based on the parentId and deviceId
     const packages = await getSubscribedPackages(deviceId, parentId);
     res.status(200).json({
       status: 200,
-      message: 'success',
+      message: 'Success',
       packages: packages,
     });
   } catch (err) {
@@ -300,7 +286,7 @@ const getSubscription = async (req, res) => {
   }
 };
 
-const calculateSubscriptionAmount = async (packageId, promoCode) => {
+const calculateSubscriptionAmount = (packageId, promoCode) => {
   const subscriptionPlans = {
     monthly: { duration: 30, price: 600, maxDevices: 1 },
     quarterly: { duration: 90, price: 3000, maxDevices: 2 },
@@ -342,7 +328,7 @@ const postSubscription = async (req, res) => {
     const { totalAmount, packageAmount, duration, maxDevices } = await calculateSubscriptionAmount(packageId, promoCode);
     res.status(200).json({
       status: 200,
-      message: 'success',
+      message: 'Success',
       totalAmount,
       packageAmount,
       duration,
@@ -369,7 +355,6 @@ module.exports = {
   forgetpassword,
   reset_password,
   createPackage,
-  getSubscribedPackages,
   getSubscription,
   postSubscription
 };

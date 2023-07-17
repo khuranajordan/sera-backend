@@ -15,7 +15,7 @@ const packageSchema = new mongoose.Schema({
     required: true,
   },
   packageId: {
-    type: Number,
+    type: String,
     required: true,
   },
   packageName: {
