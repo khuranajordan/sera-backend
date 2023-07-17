@@ -372,7 +372,6 @@ const getAllPackages = async (req, res) => {
   }
 };
 
-
 const getSubscribedPackages = async (deviceId, parentId) => {
   const packages = await fetchSubscribedPackages(deviceId, parentId);
   return packages;
@@ -422,7 +421,7 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
 
   const { duration, price, maxDevices } = subscriptionPlans[packageId];
   const totalAmount = price;
-  const updatedDuration = duration + durationIncrease;
+  const updatedDuration = packageId === 'monthly' ? duration : duration + durationIncrease;
 
   return {
     totalAmount,
@@ -431,6 +430,7 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
     maxDevices,
   };
 };
+
 
 const postSubscription = async (req, res) => {
   try {

@@ -17,6 +17,12 @@ const packageSchema = new mongoose.Schema({
   promoCode: {
     type: String,
     required: true,
+    validate: {
+      validator: function(value) {
+        return /^sera\d{3}$/.test(value);
+      },
+      message: props => `${props.value} is not a valid promoCode. It should be in the format "seraXXX" where XXX is a three-digit number.`,
+    },
   },
   packageId: {
     type: String,
@@ -37,4 +43,5 @@ const packageSchema = new mongoose.Schema({
 const PackageModel = mongoose.model('Package', packageSchema);
 
 module.exports = PackageModel;
+
 
