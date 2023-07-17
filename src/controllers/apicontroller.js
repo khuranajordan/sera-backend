@@ -262,6 +262,25 @@ const createPackage = async (req, res) => {
   }
 };
 
+const getAllPackages = async (req, res) => {
+  try {
+    const allPackages = await PackageModel.find();
+    console.log(allPackages)
+    res.status(200).json({
+      status: 200,
+      message: 'All packages retrieved successfully',
+      packages: allPackages,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error retrieving packages',
+      error: err.message,
+    });
+  }
+};
+
+
 const getSubscribedPackages = async (deviceId, parentId) => {
   const packages = await fetchSubscribedPackages(deviceId, parentId);
   return packages;
@@ -355,6 +374,7 @@ module.exports = {
   forgetpassword,
   reset_password,
   createPackage,
+  getAllPackages,
   getSubscription,
   postSubscription
 };
