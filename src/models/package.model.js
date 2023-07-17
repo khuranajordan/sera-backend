@@ -14,9 +14,14 @@ const packageSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  promoCode: {
+    type: String,
+    required: true,
+  },
   packageId: {
     type: String,
     required: true,
+    enum: ['monthly', 'quarterly', 'yearly'],
   },
   packageName: {
     type: String,
@@ -32,3 +37,4 @@ const packageSchema = new mongoose.Schema({
 const PackageModel = mongoose.model('Package', packageSchema);
 
 module.exports = PackageModel;
+

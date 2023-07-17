@@ -17,11 +17,10 @@ const decryptPass = encryptedPassword => {
 const create = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, userisparent, mobile, isEmailVerified } = req.body;
-
+    console.log(name, email, password, confirmPassword, userisparent, mobile, isEmailVerified)
     if (!name || !email || !password || !confirmPassword || !userisparent || !mobile || !isEmailVerified) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
@@ -236,11 +235,12 @@ const fetchSubscribedPackages = async (deviceId, parentId) => {
 
 const createPackage = async (req, res) => {
   try {
-    const { price, numberOfDays, isPromoCode, packageId, packageName, packageDetails } = req.body;
+    const { price, numberOfDays, isPromoCode,promoCode, packageId, packageName, packageDetails } = req.body;
     const newPackage = new PackageModel({
       price,
       numberOfDays,
       isPromoCode,
+      promoCode,
       packageId,
       packageName,
       packageDetails,
@@ -257,6 +257,98 @@ const createPackage = async (req, res) => {
     res.status(400).json({
       status: 400,
       message: 'Error creating package',
+      error: err.message,
+    });
+  }
+};
+
+
+const deletePackageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the package by ID and delete it
+    const deletedPackage = await PackageModel.findByIdAndDelete(id);
+
+    if (!deletedPackage) {
+      // If no package is found with the provided ID
+      return res.status(404).json({
+        status: 404,
+        message: 'Package not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Package deleted successfully',
+      package: deletedPackage,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error deleting package',
+      error: err.message,
+    });
+  }
+};
+
+const updatePackageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateFields = req.body;
+
+    // Find the package by ID and update it
+    const updatedPackage = await PackageModel.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedPackage) {
+      // If no package is found with the provided ID
+      return res.status(404).json({
+        status: 404,
+        message: 'Package not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Package updated successfully',
+      package: updatedPackage,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error updating package',
+      error: err.message,
+    });
+  }
+};
+
+
+
+const filterByPromoCode = async (req, res) => {
+  try {
+    const { promoCode } = req.query;
+    const packages = await PackageModel.find({ promoCode });
+
+    if (packages.length === 0) {
+      res.status(404).json({
+        status: 404,
+        message: 'No packages found with the provided promoCode',
+      });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: 'Packages retrieved successfully',
+        packages,
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error retrieving packages',
       error: err.message,
     });
   }
@@ -374,7 +466,10 @@ module.exports = {
   forgetpassword,
   reset_password,
   createPackage,
+  deletePackageById,
+  updatePackageById,
   getAllPackages,
+  filterByPromoCode,
   getSubscription,
   postSubscription
 };

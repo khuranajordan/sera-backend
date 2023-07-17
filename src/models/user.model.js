@@ -35,6 +35,16 @@ const userSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
+    confirmPassword: {
+      type: String,
+      required: true,
+      trim: true,
+      validate(value) {
+        if (value !== this.password) {
+          throw new Error('Passwords do not match');
+        }
+      },
+    },
     passcode: {
       type: String,
       required: true,
@@ -44,7 +54,6 @@ const userSchema = mongoose.Schema(
     },
     userisparent: {
       type: Boolean, // true = parents, false = child
-
     },
     mobile: {
       type: String,
@@ -73,6 +82,7 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   },
 );
+
 
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);
