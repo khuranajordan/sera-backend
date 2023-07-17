@@ -20,8 +20,8 @@ const { create,
  } = require('../../controllers/apicontroller');
 const router = express.Router();
 
-router.route('/create').post(create);
-router.route('/login').post(login);
+router.route('/createUser').post(create);
+router.route('/loginUser').post(login);
 router.route('/getCred').get(getCred);
 router.route('/generatePairingCode').post(generatePairingCode);
 router.route('/pairChildDevice').post(pairChildDevice);
