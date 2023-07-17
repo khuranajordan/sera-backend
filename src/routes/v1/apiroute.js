@@ -11,7 +11,6 @@ const { create,
     forgetpassword,
     reset_password,
     createPackage,
-    filterByPromoCode,
     getAllPackages,
     deletePackageById,
     updatePackageById,
@@ -30,7 +29,6 @@ router.route('/reset_password').post(reset_password);
 router.route('/createPackage').post(createPackage);
 router.route('/packages/:id').delete(deletePackageById);
 router.route('/packages/:id').put(updatePackageById);
-router.route('/filterByPromoCode').get(filterByPromoCode)
 router.route('/getPackages').get(getAllPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);

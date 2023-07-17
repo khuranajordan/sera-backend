@@ -297,7 +297,6 @@ const updatePackageById = async (req, res) => {
     const { id } = req.params;
     const updateFields = req.body;
 
-    // Find the package by ID and update it
     const updatedPackage = await PackageModel.findByIdAndUpdate(
       id,
       updateFields,
@@ -305,7 +304,6 @@ const updatePackageById = async (req, res) => {
     );
 
     if (!updatedPackage) {
-      // If no package is found with the provided ID
       return res.status(404).json({
         status: 404,
         message: 'Package not found',
@@ -327,40 +325,14 @@ const updatePackageById = async (req, res) => {
 };
 
 
-
-const filterByPromoCode = async (req, res) => {
-  try {
-    const { promoCode } = req.query;
-    const packages = await PackageModel.find({ promoCode });
-
-    if (packages.length === 0) {
-      res.status(404).json({
-        status: 404,
-        message: 'No packages found with the provided promoCode',
-      });
-    } else {
-      res.status(200).json({
-        status: 200,
-        message: 'Packages retrieved successfully',
-        packages,
-      });
-    }
-  } catch (err) {
-    res.status(400).json({
-      status: 400,
-      message: 'Error retrieving packages',
-      error: err.message,
-    });
-  }
-};
-
 const getAllPackages = async (req, res) => {
   try {
     const allPackages = await PackageModel.find();
-    console.log(allPackages)
+    const totalItems = allPackages.length;
     res.status(200).json({
       status: 200,
       message: 'All packages retrieved successfully',
+      totalItems: totalItems,
       packages: allPackages,
     });
   } catch (err) {
@@ -371,6 +343,7 @@ const getAllPackages = async (req, res) => {
     });
   }
 };
+
 
 const getSubscribedPackages = async (deviceId, parentId) => {
   const packages = await fetchSubscribedPackages(deviceId, parentId);
@@ -469,7 +442,6 @@ module.exports = {
   deletePackageById,
   updatePackageById,
   getAllPackages,
-  filterByPromoCode,
   getSubscription,
   postSubscription
 };
