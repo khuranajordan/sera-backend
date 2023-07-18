@@ -36,4 +36,3 @@ router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
 module.exports = router;
-

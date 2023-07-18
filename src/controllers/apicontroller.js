@@ -1,8 +1,8 @@
-const { User } = require('../models');
+const {User} = require('../models');
 const jwt = require('jsonwebtoken');
-const { ParentDevice } = require('../models/parentDevice');
-const { Child } = require('../models/child');
-const PackageModel = require('../models/package.model')
+const {ParentDevice} = require('../models/parentDevice');
+const {Child} = require('../models/child');
+const PackageModel = require('../models/package.model');
 // Define the decryptPass function
 const decryptPass = encryptedPassword => {
   // Implement your decryption logic here, for example using bcrypt
@@ -16,19 +16,45 @@ const decryptPass = encryptedPassword => {
 
 const create = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, userisparent, mobile, isEmailVerified } = req.body;
-    console.log(name, email, password, confirmPassword, userisparent, mobile, isEmailVerified)
-    if (!name || !email || !password || !confirmPassword || !userisparent || !mobile || !isEmailVerified) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const {
+      name,
+      email,
+      password,
+      confirmPassword,
+      userisparent,
+      mobile,
+      isEmailVerified,
+    } = req.body;
+    console.log(
+      name,
+      email,
+      password,
+      confirmPassword,
+      userisparent,
+      mobile,
+      isEmailVerified,
+    );
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !userisparent ||
+      !mobile ||
+      !isEmailVerified
+    ) {
+      return res.status(400).json({message: 'All fields are required'});
     }
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
+      return res.status(400).json({message: 'Passwords do not match'});
     }
 
     // Check if password length is less than 8 characters
     if (password.length < 8) {
-      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
+      return res
+        .status(400)
+        .json({message: 'Password length should be a minimum of 8 characters'});
     }
 
     const user = await User.create({
@@ -38,7 +64,7 @@ const create = async (req, res) => {
       confirmPassword,
       userisparent,
       mobile,
-      isEmailVerified
+      isEmailVerified,
     });
 
     const token = jwt.sign(user.id, 'abcdefghijklmn');
@@ -55,28 +81,29 @@ const create = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(404).json({ message: error.message });
+    return res.status(404).json({message: error.message});
   }
 };
 
-
 const login = async (req, res) => {
   try {
-    const { mobile, userisparent, password } = req.body;
-    const user = await User.findOne({ mobile });
+    const {mobile, userisparent, password} = req.body;
+    const user = await User.findOne({mobile});
     if (!user) {
-      return res.status(202).json({ message: 'Mobile number is not found' });
+      return res.status(202).json({message: 'Mobile number is not found'});
     }
 
     // Check if password length is less than 8 characters
     if (password.length < 8) {
-      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
+      return res
+        .status(400)
+        .json({message: 'Password length should be a minimum of 8 characters'});
     }
 
     const isMatch = await user.isPasswordMatch(password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: 'Password does not match' });
+      return res.status(401).json({message: 'Password does not match'});
     }
 
     const token = jwt.sign(user.id, 'abcdefghijklmn');
@@ -93,17 +120,16 @@ const login = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({message: error.message});
   }
 };
-
 
 const getCred = async (req, res) => {
   try {
     const users = await User.find();
 
     if (!users || users.length === 0) {
-      return res.status(404).json({ message: 'No users found' });
+      return res.status(404).json({message: 'No users found'});
     }
 
     const response = {
@@ -115,9 +141,10 @@ const getCred = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({message: 'Internal server error'});
   }
 };
+
 
 
 const generatePairingCode = async (req, res) => {
@@ -145,20 +172,22 @@ const generatePairingCode = async (req, res) => {
   }
 };
 
-
 const pairChildDevice = async (req, res) => {
   try {
-    const { deviceid, pairing_code, name, age } = req.body;
-    const parentDevice = await ParentDevice.findOne({ pairingCode: pairing_code });
+    const {deviceid, pairing_code, name, age} = req.body;
+    const parentDevice = await ParentDevice.findOne({
+      pairingCode: pairing_code,
+    });
+    
     if (!parentDevice) {
-      res.status(404).json({ error: 'Parent device not found' });
+      res.status(404).json({error: 'Parent device not found'});
       return;
     }
     const childApp = new Child({
       pairingCode: pairing_code,
       deviceid,
       name,
-      age
+      age,
     });
     const savedChild = await childApp.save();
     const { _id, __v, ...responseData } = savedChild.toObject();
@@ -178,11 +207,13 @@ const pairChildDevice = async (req, res) => {
 
 const getChildDataByPairingCode = async (req, res) => {
   try {
-    const { pairing_code } = req.body;
-    const childData = await Child.find({ pairingCode: pairing_code });
+    const {pairing_code} = req.body;
+    const childData = await Child.find({pairingCode: pairing_code});
 
     if (childData.length === 0) {
-      res.status(404).json({ error: 'No child data found for the provided pairing code' });
+      res
+        .status(404)
+        .json({error: 'No child data found for the provided pairing code'});
       return;
     }
 
@@ -193,40 +224,39 @@ const getChildDataByPairingCode = async (req, res) => {
   }
 };
 
-
-const forgetpassword = async(req,res)=>{
+const forgetpassword = async (req, res) => {
   try {
-    let data = await User.findOne({mobile:req.body.mobile})
-    if(!data){
-      return res.status(402).json({message:"mobile is not found"})
+    let data = await User.findOne({mobile: req.body.mobile});
+    if (!data) {
+      return res.status(402).json({message: 'mobile is not found'});
     }
     const response = {
-      "status": 200,
-      "message": "Success",
-      "mobile":data.mobile
+      status: 200,
+      message: 'Success',
+      mobile: data.mobile,
     };
-    return res.status(200).json(response)
-    
+    return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(500).json( error.message );
+    return res.status(500).json(error.message);
   }
-}
+};
 
 const reset_password = async (req, res) => {
   try {
-    let { mobile, newPassword } = req.body;
+    let {mobile, newPassword} = req.body;
 
     if (newPassword.length < 8) {
-      return res.status(400).json({ message: 'Password length should be a minimum of 8 characters' });
+      return res
+        .status(400)
+        .json({message: 'Password length should be a minimum of 8 characters'});
     }
 
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({mobile});
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({error: 'User not found'});
     }
-
     user.password = newPassword;
 
     await user.save();
@@ -242,10 +272,9 @@ const reset_password = async (req, res) => {
   }
 };
 
-
 const fetchSubscribedPackages = async (deviceId, parentId) => {
   try {
-    const subscribedPackages = await PackageModel.find({ deviceId, parentId });
+    const subscribedPackages = await PackageModel.find({deviceId, parentId});
     return subscribedPackages;
   } catch (err) {
     throw new Error('Error fetching subscribed packages: ' + err.message);
@@ -280,10 +309,9 @@ const createPackage = async (req, res) => {
   }
 };
 
-
 const deletePackageById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Find the package by ID and delete it
     const deletedPackage = await PackageModel.findByIdAndDelete(id);
@@ -312,13 +340,13 @@ const deletePackageById = async (req, res) => {
 
 const updatePackageById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const updateFields = req.body;
 
     const updatedPackage = await PackageModel.findByIdAndUpdate(
       id,
       updateFields,
-      { new: true }
+      {new: true},
     );
 
     if (!updatedPackage) {
@@ -361,7 +389,6 @@ const getAllPackages = async (req, res) => {
   }
 };
 
-
 const getSubscribedPackages = async (deviceId, parentId) => {
   const packages = await fetchSubscribedPackages(deviceId, parentId);
   return packages;
@@ -369,7 +396,7 @@ const getSubscribedPackages = async (deviceId, parentId) => {
 
 const getSubscription = async (req, res) => {
   try {
-    const { deviceId, parentId } = req.query;
+    const {deviceId, parentId} = req.query;
 
     const packages = await getSubscribedPackages(deviceId, parentId);
     res.status(200).json({
@@ -388,9 +415,9 @@ const getSubscription = async (req, res) => {
 
 const calculateSubscriptionAmount = (packageId, promoCode) => {
   const subscriptionPlans = {
-    monthly: { duration: 30, price: 600, maxDevices: 1 },
-    quarterly: { duration: 90, price: 3000, maxDevices: 2 },
-    yearly: { duration: 365, price: 6000, maxDevices: 4 },
+    monthly: {duration: 30, price: 600, maxDevices: 1},
+    quarterly: {duration: 90, price: 3000, maxDevices: 2},
+    yearly: {duration: 365, price: 6000, maxDevices: 4},
   };
 
   if (!(packageId in subscriptionPlans)) {
@@ -398,7 +425,10 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
   }
 
   let durationIncrease = 0;
-  const validPromoCodes = Array.from({ length: 91 }, (_, i) => `sera${String(10 + i).padStart(3, '0')}`);
+  const validPromoCodes = Array.from(
+    {length: 91},
+    (_, i) => `sera${String(10 + i).padStart(3, '0')}`,
+  );
   if (validPromoCodes.includes(promoCode)) {
     if (packageId === 'quarterly') {
       durationIncrease = 30;
@@ -409,9 +439,10 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
     throw new Error('Invalid promoCode: ' + promoCode);
   }
 
-  const { duration, price, maxDevices } = subscriptionPlans[packageId];
+  const {duration, price, maxDevices} = subscriptionPlans[packageId];
   const totalAmount = price;
-  const updatedDuration = packageId === 'monthly' ? duration : duration + durationIncrease;
+  const updatedDuration =
+    packageId === 'monthly' ? duration : duration + durationIncrease;
 
   return {
     totalAmount,
@@ -421,12 +452,12 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
   };
 };
 
-
 const postSubscription = async (req, res) => {
   try {
-    const { packageId, promoCode } = req.body;
+    const {packageId, promoCode} = req.body;
 
-    const { totalAmount, packageAmount, duration, maxDevices } = await calculateSubscriptionAmount(packageId, promoCode);
+    const {totalAmount, packageAmount, duration, maxDevices} =
+      await calculateSubscriptionAmount(packageId, promoCode);
     res.status(200).json({
       status: 200,
       message: 'Success',
@@ -444,9 +475,6 @@ const postSubscription = async (req, res) => {
   }
 };
 
-
-
-
 module.exports = {
   create,
   login,
@@ -461,5 +489,5 @@ module.exports = {
   updatePackageById,
   getAllPackages,
   getSubscription,
-  postSubscription
+  postSubscription,
 };
