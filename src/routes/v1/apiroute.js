@@ -8,6 +8,7 @@ const { create,
     getCred, 
     generatePairingCode,
     pairChildDevice,
+    getChildDataByPairingCode,
     forgetpassword,
     reset_password,
     createPackage,
@@ -24,6 +25,7 @@ router.route('/loginUser').post(login);
 router.route('/getCred').get(getCred);
 router.route('/generatePairingCode').post(generatePairingCode);
 router.route('/pairChildDevice').post(pairChildDevice);
+router.route('/getChildData').post(getChildDataByPairingCode);
 router.route('/forgetpassword').post(forgetpassword);
 router.route('/reset_password').post(reset_password);
 router.route('/createPackage').post(createPackage);
@@ -32,7 +34,6 @@ router.route('/packages/:id').put(updatePackageById);
 router.route('/getPackages').get(getAllPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
-
 
 module.exports = router;
 

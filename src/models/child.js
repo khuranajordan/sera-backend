@@ -3,24 +3,26 @@ const { Schema } = mongoose;
 
 // Define the parent device schema
 const childSchema = new Schema({
+  pairingCode: {
+    type: String,
+    required: true
+  },
   deviceid: {
     type: String,
     required: true
   },
-  pairingCode: {
-    type: Number,
+  name: {
+    type: String,
     required: true
   },
   age: {
     type: Number,
-    min: 0,
-    max: 18,
     required: true
   }
 });
 
-const child = mongoose.model('child', childSchema);
+const Child = mongoose.model('Child', childSchema);
 
 module.exports = {
-    child
-  };
+  Child
+};

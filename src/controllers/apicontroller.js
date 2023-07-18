@@ -1,7 +1,7 @@
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const { ParentDevice } = require('../models/parentDevice');
-const { child } = require('../models/child');
+const { Child } = require('../models/child');
 const PackageModel = require('../models/package.model')
 // Define the decryptPass function
 const decryptPass = encryptedPassword => {
@@ -123,21 +123,15 @@ const getCred = async (req, res) => {
 const generatePairingCode = async(req,res)=>{
   try {
     const { deviceid } = req.body;
-    
-    // Generate a random pairing code
     const pairingCode = Math.floor(Math.random() * 100000);
-    
-    // Save the parent device with the pairing code
     const parentDevice = new ParentDevice({
       deviceid,
       pairingCode
     });
     await parentDevice.save();
-    // Prepare the response JSON
     const response = {
       "pairing_code": pairingCode
     };
-    
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
@@ -145,34 +139,50 @@ const generatePairingCode = async(req,res)=>{
   }
 };
 
-const pairChildDevice = async(req, res)=>{
+const pairChildDevice = async (req, res) => {
   try {
-    const { deviceid, pairing_code } = req.body;
-    
-    // Find the parent device with the provided pairing code
+    const { deviceid, pairing_code, name, age } = req.body;
     const parentDevice = await ParentDevice.findOne({ pairingCode: pairing_code });
     if (!parentDevice) {
       res.status(404).json({ error: 'Parent device not found' });
       return;
     }
-    const childApp = new child({
+    const childApp = new Child({
       pairingCode: pairing_code,
       deviceid,
-      age: req.body.age
+      name,
+      age
     });
     await childApp.save();
     const response = {
-      "status": 200,
-      "message": "Success",
-      "deviceid":deviceid,
-      "pairingCode":pairing_code
+      status: 200,
+      message: 'Success',
+      deviceid: deviceid,
+      pairingCode: pairing_code
     };
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(500).json( error.message );
+    return res.status(500).json(error.message);
   }
-}
+};
+
+const getChildDataByPairingCode = async (req, res) => {
+  try {
+    const { pairing_code } = req.body;
+    const childData = await Child.find({ pairingCode: pairing_code });
+
+    if (childData.length === 0) {
+      res.status(404).json({ error: 'No child data found for the provided pairing code' });
+      return;
+    }
+
+    return res.status(200).json(childData);
+  } catch (error) {
+    console.log(error.message, 'error');
+    return res.status(500).json(error.message);
+  }
+};
 
 
 const forgetpassword = async(req,res)=>{
@@ -436,6 +446,7 @@ module.exports = {
   getCred,
   generatePairingCode,
   pairChildDevice,
+  getChildDataByPairingCode,
   forgetpassword,
   reset_password,
   createPackage,
