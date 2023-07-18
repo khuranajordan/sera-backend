@@ -178,7 +178,7 @@ const pairChildDevice = async (req, res) => {
     const parentDevice = await ParentDevice.findOne({
       pairingCode: pairing_code,
     });
-    
+
     if (!parentDevice) {
       res.status(404).json({error: 'Parent device not found'});
       return;
@@ -308,6 +308,28 @@ const createPackage = async (req, res) => {
     });
   }
 };
+
+const filterPackagesByPromoCode = async (req, res) => {
+  try {
+    const { promoCode } = req.body;
+
+    const filteredPackages = await PackageModel.find({ promoCode });
+    const totalItems = filteredPackages.length;
+    res.status(200).json({
+      status: 200,
+      message: 'Packages filtered successfully',
+      totalItems,
+      packages: filteredPackages,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: 'Error filtering packages by promoCode',
+      error: err.message,
+    });
+  }
+};
+
 
 const deletePackageById = async (req, res) => {
   try {
@@ -485,6 +507,7 @@ module.exports = {
   forgetpassword,
   reset_password,
   createPackage,
+  filterPackagesByPromoCode,
   deletePackageById,
   updatePackageById,
   getAllPackages,

@@ -12,6 +12,7 @@ const { create,
     forgetpassword,
     reset_password,
     createPackage,
+    filterPackagesByPromoCode,
     getAllPackages,
     deletePackageById,
     updatePackageById,
@@ -29,6 +30,7 @@ router.route('/getChildData').post(getChildDataByPairingCode);
 router.route('/forgetpassword').post(forgetpassword);
 router.route('/reset_password').post(reset_password);
 router.route('/createPackage').post(createPackage);
+router.route('/filterbyPromoCode').post(filterPackagesByPromoCode);
 router.route('/packages/:id').delete(deletePackageById);
 router.route('/packages/:id').put(updatePackageById);
 router.route('/getPackages').get(getAllPackages);
