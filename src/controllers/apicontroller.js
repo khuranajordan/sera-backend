@@ -153,12 +153,13 @@ const pairChildDevice = async (req, res) => {
       name,
       age
     });
-    await childApp.save();
+    const savedChild = await childApp.save();
+    const { _id, __v, ...responseData } = savedChild.toObject();
+
     const response = {
       status: 200,
       message: 'Success',
-      deviceid: deviceid,
-      pairingCode: pairing_code
+      ...responseData
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -166,6 +167,7 @@ const pairChildDevice = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+
 
 const getChildDataByPairingCode = async (req, res) => {
   try {
@@ -333,7 +335,6 @@ const updatePackageById = async (req, res) => {
     });
   }
 };
-
 
 const getAllPackages = async (req, res) => {
   try {
