@@ -120,24 +120,31 @@ const getCred = async (req, res) => {
 };
 
 
-const generatePairingCode = async(req,res)=>{
+const generatePairingCode = async (req, res) => {
   try {
     const { deviceid } = req.body;
-    const pairingCode = Math.floor(Math.random() * 100000);
-    const parentDevice = new ParentDevice({
-      deviceid,
-      pairingCode
-    });
-    await parentDevice.save();
+    let parentDevice = await ParentDevice.findOne({ deviceid });
+
+    if (!parentDevice) {
+      const pairingCode = Math.floor(Math.random() * 100000);
+      parentDevice = new ParentDevice({
+        deviceid,
+        pairingCode,
+      });
+      await parentDevice.save();
+    }
+
     const response = {
-      "pairing_code": pairingCode
+      pairing_code: parentDevice.pairingCode,
     };
+
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 const pairChildDevice = async (req, res) => {
   try {
@@ -247,9 +254,10 @@ const fetchSubscribedPackages = async (deviceId, parentId) => {
 
 const createPackage = async (req, res) => {
   try {
-    const { price, numberOfDays, isPromoCode,promoCode, packageId, packageName, packageDetails } = req.body;
+    const { price, off, numberOfDays, isPromoCode, promoCode, packageId, packageName, packageDetails } = req.body;
     const newPackage = new PackageModel({
       price,
+      off,
       numberOfDays,
       isPromoCode,
       promoCode,
@@ -257,8 +265,6 @@ const createPackage = async (req, res) => {
       packageName,
       packageDetails,
     });
-
-    // Save the new package document to the database
     const savedPackage = await newPackage.save();
     res.status(201).json({
       status: 201,

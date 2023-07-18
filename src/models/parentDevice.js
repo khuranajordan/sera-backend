@@ -9,12 +9,19 @@ const parentDeviceSchema = new Schema({
   },
   pairingCode: {
     type: Number,
-    required: true
+    required: true,
+    validate: {
+      validator: function (value) {
+        const code = value.toString();
+        return code.length === 5;
+      },
+      message: 'Pairing code must be 5 digits long.'
+    }
   }
 });
 
 const ParentDevice = mongoose.model('ParentDevice', parentDeviceSchema);
 
 module.exports = {
-    ParentDevice
-  };
+  ParentDevice
+};
