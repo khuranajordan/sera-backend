@@ -3,16 +3,42 @@ const jwt = require('jsonwebtoken');
 const {ParentDevice} = require('../models/parentDevice');
 const {Child} = require('../models/child');
 const PackageModel = require('../models/package.model');
-// Define the decryptPass function
-const decryptPass = encryptedPassword => {
-  // Implement your decryption logic here, for example using bcrypt
-  // You can adjust this function to match the encryption method you are using
-  const decryptedPassword = bcrypt.compareSync(
-    'plainPassword',
-    encryptedPassword,
-  );
-  return decryptedPassword;
-};
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../controllers/sera-a3a21-firebase-adminsdk-uxfg8-dbe56f1aa3.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+//push notification function for andriod
+const send_push_notification = async function (device_token, notification_data) {
+  try {
+    if (device_token !== '' && !Array.isArray(device_token)) {
+      console.log("device_token--------------------------------------", device_token);
+      // console.log("{{{{{{{{{{{{{{{{{{{{{")
+
+      var new_message = {
+        to: device_token,
+        data: notification_data
+      };
+      var serverKey = 'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
+      var fcm = new FCM(serverKey);
+
+      fcm.send(new_message, function (err, response) {
+        if (err) {
+          console.log(err, "notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        } else {
+          console.log("Successfully sent with response: ", response);
+        }
+      });
+    } else {
+      console.log("Invalid device_token");
+    }
+  } catch (err) {
+    throw new Error(`Error while decoding token::: ${err}`);
+  }
+}
 
 const create = async (req, res) => {
   try {
