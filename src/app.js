@@ -6,6 +6,7 @@ const compression = require('compression');
 const cors = require('cors');
 const passport = require('passport');
 const httpStatus = require('http-status');
+const Razorpay = require('razorpay');
 const config = require('./config/config');
 const morgan = require('./config/morgan');
 const {jwtStrategy} = require('./config/passport');
@@ -56,6 +57,33 @@ app.use('/v1', routes);
 app.get('/test', (req, res) => {
   res.send('Test Success');
 });
+
+app.post('/sera/payment', async (req, res) => {
+  try {
+    const {amount} = req.body;
+    const instance = new Razorpay({
+      key_id: 'rzp_test_XYwqCpEMLN449E',
+      key_secret: 'OWLVzaBFEImYojFKUATgrsdZ',
+    });
+
+    const order = instance.orders.create({
+      amount: amount * 100,
+      currency: 'INR',
+      receipt: 'receipt#1',
+    });
+
+    res.status(201).json({
+      success: 'true',
+      order,
+      amount,
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).json({error: 'Failed to create payment order'});
+  }
+});
+
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
