@@ -45,6 +45,9 @@ const userSchema = mongoose.Schema(
         }
       },
     },
+    device_token:{
+      type:String
+    },
     passcode: {
       type: String,
       required: true,

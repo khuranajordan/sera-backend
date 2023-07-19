@@ -50,6 +50,7 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
+      device_token
     } = req.body;
     console.log(
       name,
@@ -59,6 +60,7 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
+      device_token
     );
     if (
       !name ||
@@ -67,7 +69,8 @@ const create = async (req, res) => {
       !confirmPassword ||
       !userisparent ||
       !mobile ||
-      !isEmailVerified
+      !isEmailVerified ||
+      !device_token
     ) {
       return res.status(400).json({message: 'All fields are required'});
     }
@@ -91,6 +94,7 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
+      device_token
     });
 
     const token = jwt.sign(user.id, 'abcdefghijklmn');
