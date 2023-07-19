@@ -7,6 +7,7 @@ const { create,
     login, 
     getCred, 
     generatePairingCode,
+    addChildApp,
     pairChildDevice,
     getChildDataByPairingCode,
     forgetpassword,
@@ -25,6 +26,7 @@ router.route('/createUser').post(create);
 router.route('/loginUser').post(login);
 router.route('/getCred').get(getCred);
 router.route('/generatePairingCode').post(generatePairingCode);
+router.route('/addChildApp').post(addChildApp);
 router.route('/pairChildDevice').post(pairChildDevice);
 router.route('/getChildData').post(getChildDataByPairingCode);
 router.route('/forgetpassword').post(forgetpassword);
