@@ -177,15 +177,15 @@ const generatePairingCode = async (req, res) => {
   try {
     const { deviceid } = req.body;
     let parentDevice = await ParentDevice.findOne({ deviceid });
-    const childData = await Child.find({ pairingCode: parentDevice.pairingCode });
- 
+
     if (parentDevice) {
+      const childData = await Child.find({ pairingCode: parentDevice.pairingCode });
       const response = {
         status: 200,
         message: 'Success',
         deviceid: deviceid,
         pairingCode: parentDevice.pairingCode,
-        childData: childData || []// Initialize with an empty array
+        childData: childData || [] // Initialize with an empty array
       };
       return res.status(200).json(response);
     }
@@ -202,7 +202,7 @@ const generatePairingCode = async (req, res) => {
       message: 'Success',
       deviceid: deviceid,
       pairingCode: newPairingCode,
-      childData: childData || []
+      childData: []
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -210,6 +210,7 @@ const generatePairingCode = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+
 
 
 const generateNewPairingCode = () => {
