@@ -184,11 +184,28 @@ const generatePairingCode = async (req, res) => {
     });
 
     let parentDevice = await ParentDevice.findOne({ pairingCode });
-    let childCred = await Child.find({ pairingCode});
+    let childCred = await Child.find({ pairingCode });
 
     if (!parentDevice) {
-      res.status(404).json({ error: 'Parent device not found' });
-      return;
+      // Parent device not found, generate a new pairing code and push deviceid
+      const newPairingCode = generateNewPairingCode();
+      parentDevice = new ParentDevice({
+        pairingCode: newPairingCode,
+        deviceid: deviceid,
+      });
+      await parentDevice.save();
+
+      const savedChild = await childApp.save();
+      const { _id, __v, ...responseData } = savedChild.toObject();
+
+      const response = {
+        status: 200,
+        message: 'Success',
+        deviceid: deviceid,
+        pairingCode: newPairingCode,
+        childCred: childCred,
+      };
+      return res.status(200).json(response);
     }
 
     const savedChild = await childApp.save();
@@ -197,16 +214,22 @@ const generatePairingCode = async (req, res) => {
     const response = {
       status: 200,
       message: 'Success',
-      ...responseData,
       childCred: childCred,
+      ...responseData,
     };
-
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
     return res.status(500).json(error.message);
   }
 };
+const generateNewPairingCode = () => {
+  const min = 10000; // Minimum 5-digit number (inclusive)
+  const max = 99999; // Maximum 5-digit number (inclusive)
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+
 
 
 
