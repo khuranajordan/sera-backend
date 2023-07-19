@@ -175,28 +175,38 @@ const getCred = async (req, res) => {
 
 const generatePairingCode = async (req, res) => {
   try {
-    const { deviceid } = req.body;
-    let parentDevice = await ParentDevice.findOne({ deviceid });
+    const { deviceid, pairing_code, name, age } = req.body;
+    let parentDevice = await ParentDevice.findOne({ pairingCode: pairing_code });
 
     if (!parentDevice) {
-      const pairingCode = Math.floor(Math.random() * 100000);
-      parentDevice = new ParentDevice({
-        deviceid,
-        pairingCode,
-      });
-      await parentDevice.save();
+      res.status(404).json({ error: 'Parent device not found' });
+      return;
     }
 
+    const childApp = new Child({
+      pairingCode: pairing_code,
+      deviceid,
+      name,
+      age,
+    });
+
+    const savedChild = await childApp.save();
+    const { _id, __v, ...responseData } = savedChild.toObject();
+
     const response = {
-      pairing_code: parentDevice.pairingCode,
+      status: 200,
+      message: 'Success',
+      ...responseData
     };
 
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json(error.message);
   }
 };
+
+
 
 const pairChildDevice = async (req, res) => {
   try {
