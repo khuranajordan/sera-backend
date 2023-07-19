@@ -4,8 +4,15 @@ const { Schema } = mongoose;
 // Define the parent device schema
 const childSchema = new Schema({
   pairingCode: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (value) {
+        const code = value.toString();
+        return code.length === 5;
+      },
+      message: 'Pairing code must be 5 digits long.'
+    }
   },
   deviceid: {
     type: String,

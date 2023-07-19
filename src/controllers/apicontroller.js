@@ -175,20 +175,21 @@ const getCred = async (req, res) => {
 
 const generatePairingCode = async (req, res) => {
   try {
-    const { deviceid, pairing_code, name, age } = req.body;
-    let parentDevice = await ParentDevice.findOne({ pairingCode: pairing_code });
+    const { deviceid, pairingCode, name, age } = req.body;
+    const childApp = new Child({
+      pairingCode,
+      deviceid,
+      name,
+      age,
+    });
+
+    let parentDevice = await ParentDevice.findOne({ pairingCode });
+    let childCred = await Child.find({ pairingCode});
 
     if (!parentDevice) {
       res.status(404).json({ error: 'Parent device not found' });
       return;
     }
-
-    const childApp = new Child({
-      pairingCode: pairing_code,
-      deviceid,
-      name,
-      age,
-    });
 
     const savedChild = await childApp.save();
     const { _id, __v, ...responseData } = savedChild.toObject();
@@ -196,7 +197,8 @@ const generatePairingCode = async (req, res) => {
     const response = {
       status: 200,
       message: 'Success',
-      ...responseData
+      ...responseData,
+      childCred: childCred,
     };
 
     return res.status(200).json(response);
