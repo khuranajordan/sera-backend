@@ -320,20 +320,25 @@ const forgetpassword = async (req, res) => {
 
 const reset_password = async (req, res) => {
   try {
-    let {mobile, newPassword} = req.body;
+    let {mobile, newPassword, confirmPassword} = req.body;
 
     if (newPassword.length < 8) {
       return res
         .status(400)
         .json({message: 'Password length should be a minimum of 8 characters'});
     }
-
+    
     const user = await User.findOne({mobile});
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({message: 'confirmPassword and Passwords do not match'});
+    }
 
     if (!user) {
       return res.status(404).json({error: 'User not found'});
     }
     user.password = newPassword;
+    user.confirmPassword = confirmPassword
+  
 
     await user.save();
 
