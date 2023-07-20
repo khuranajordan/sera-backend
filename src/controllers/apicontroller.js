@@ -60,7 +60,17 @@ const create = async (req, res) => {
       mobile,
       isEmailVerified,
       isSubscribed,
+      confirmPassword
     } = req.body;
+    console.log(
+      name,
+      email,
+      password,
+      userisparent,
+      mobile,
+      isEmailVerified,
+      isSubscribed
+    );
     if (
       !name ||
       !email ||
@@ -70,7 +80,12 @@ const create = async (req, res) => {
       !isEmailVerified ||
       !isSubscribed
     ) {
-      return res.status(400).json({message: 'All fields are required'});
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
     }
     if (password.length < 8) {
       return res
@@ -84,9 +99,11 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed,
+      isSubscribed
     });
-    const token = jwt.sign({id: user.id}, 'abcdefghijklmn');
+
+    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); // Replace 'your_secret_key' with your actual secret key
+
     const response = {
       code: 200,
       message: 'User created successfully',
