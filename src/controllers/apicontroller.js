@@ -46,54 +46,55 @@ const create = async (req, res) => {
       name,
       email,
       password,
-      confirmPassword,
       userisparent,
       mobile,
       isEmailVerified,
+      isSubscribed
     } = req.body;
     console.log(
       name,
       email,
       password,
-      confirmPassword,
       userisparent,
       mobile,
       isEmailVerified,
+      isSubscribed
     );
     if (
       !name ||
       !email ||
       !password ||
-      !confirmPassword ||
       !userisparent ||
       !mobile ||
-      !isEmailVerified
+      !isEmailVerified ||
+      !isSubscribed
     ) {
-      return res.status(400).json({message: 'All fields are required'});
+      return res.status(400).json({ message: 'All fields are required' });
     }
+
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
-      return res.status(400).json({message: 'Passwords do not match'});
+      return res.status(400).json({ message: 'Passwords do not match' });
     }
 
     // Check if password length is less than 8 characters
     if (password.length < 8) {
       return res
         .status(400)
-        .json({message: 'Password length should be a minimum of 8 characters'});
+        .json({ message: 'Password length should be a minimum of 8 characters' });
     }
 
     const user = await User.create({
       name,
       email,
       password,
-      confirmPassword,
       userisparent,
       mobile,
       isEmailVerified,
+      isSubscribed
     });
 
-    const token = jwt.sign(user.id, 'abcdefghijklmn');
+    const token = jwt.sign({ id: user.id }, 'your_secret_key'); // Replace 'your_secret_key' with your actual secret key
 
     const response = {
       code: 200,
@@ -107,7 +108,7 @@ const create = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(404).json({message: error.message});
+    return res.status(404).json({ message: error.message });
   }
 };
 
@@ -316,23 +317,23 @@ const forgetpassword = async (req, res) => {
 
 const reset_password = async (req, res) => {
   try {
-    let {mobile, newPassword} = req.body;
-
-    if (newPassword.length < 8) {
+    let { mobile, password, confirmPassword } = req.body;
+    if (password.length < 8) {
       return res
         .status(400)
-        .json({message: 'Password length should be a minimum of 8 characters'});
+        .json({ message: 'Password length should be a minimum of 8 characters' });
     }
-
-    const user = await User.findOne({mobile});
-
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ message: 'Password and confirm password do not match' });
+    }
+    const user = await User.findOne({ mobile });
     if (!user) {
-      return res.status(404).json({error: 'User not found'});
+      return res.status(404).json({ error: 'User not found' });
     }
-    user.password = newPassword;
-
+    user.password = password;
     await user.save();
-
     const response = {
       status: 200,
       message: 'Success',
@@ -343,6 +344,7 @@ const reset_password = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+
 
 const fetchSubscribedPackages = async (deviceId, parentId) => {
   try {
