@@ -49,7 +49,8 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed
+      isSubscribed,
+      confirmPassword
     } = req.body;
     console.log(
       name,
@@ -58,20 +59,13 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed
+      isSubscribed,
+      confirmPassword
     );
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !userisparent ||
-      !mobile ||
-      !isEmailVerified ||
-      !isSubscribed
-    ) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const users = await User.findOne({mobile})
+    if (users && users.mobile === mobile) {
+      return res.status(400).json({ message: 'Try a different mobile number' });
     }
-
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
@@ -91,8 +85,10 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed
+      isSubscribed,
+      confirmPassword
     });
+    console.log(user)
 
     const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); // Replace 'your_secret_key' with your actual secret key
 
