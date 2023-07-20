@@ -94,7 +94,7 @@ const create = async (req, res) => {
       isSubscribed
     });
 
-    const token = jwt.sign({ id: user.id }, 'your_secret_key'); // Replace 'your_secret_key' with your actual secret key
+    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); // Replace 'your_secret_key' with your actual secret key
 
     const response = {
       code: 200,
