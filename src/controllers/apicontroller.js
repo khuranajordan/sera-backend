@@ -3,42 +3,52 @@ const jwt = require('jsonwebtoken');
 const {ParentDevice} = require('../models/parentDevice');
 const {Child} = require('../models/child');
 const PackageModel = require('../models/package.model');
-var admin = require("firebase-admin");
+var admin = require('firebase-admin');
 
-var serviceAccount = require("../controllers/sera-a3a21-firebase-adminsdk-uxfg8-dbe56f1aa3.json");
+var serviceAccount = require('../controllers/sera-a3a21-firebase-adminsdk-uxfg8-dbe56f1aa3.json');
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
 //push notification function for andriod
-const send_push_notification = async function (device_token, notification_data) {
+const send_push_notification = async function (
+  device_token,
+  notification_data,
+) {
   try {
     if (device_token !== '' && !Array.isArray(device_token)) {
-      console.log("device_token--------------------------------------", device_token);
+      console.log(
+        'device_token--------------------------------------',
+        device_token,
+      );
       // console.log("{{{{{{{{{{{{{{{{{{{{{")
 
       var new_message = {
         to: device_token,
-        data: notification_data
+        data: notification_data,
       };
-      var serverKey = 'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
+      var serverKey =
+        'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
       var fcm = new FCM(serverKey);
 
       fcm.send(new_message, function (err, response) {
         if (err) {
-          console.log(err, "notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+          console.log(
+            err,
+            'notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr',
+          );
         } else {
-          console.log("Successfully sent with response: ", response);
+          console.log('Successfully sent with response: ', response);
         }
       });
     } else {
-      console.log("Invalid device_token");
+      console.log('Invalid device_token');
     }
   } catch (err) {
     throw new Error(`Error while decoding token::: ${err}`);
   }
-}
+};
 
 const create = async (req, res) => {
   try {
@@ -49,17 +59,8 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed
+      isSubscribed,
     } = req.body;
-    console.log(
-      name,
-      email,
-      password,
-      userisparent,
-      mobile,
-      isEmailVerified,
-      isSubscribed
-    );
     if (
       !name ||
       !email ||
@@ -69,21 +70,13 @@ const create = async (req, res) => {
       !isEmailVerified ||
       !isSubscribed
     ) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({message: 'All fields are required'});
     }
-
-    // Check if password and confirmPassword match
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
-    // Check if password length is less than 8 characters
     if (password.length < 8) {
       return res
         .status(400)
-        .json({ message: 'Password length should be a minimum of 8 characters' });
+        .json({message: 'Password length should be a minimum of 8 characters'});
     }
-
     const user = await User.create({
       name,
       email,
@@ -91,11 +84,9 @@ const create = async (req, res) => {
       userisparent,
       mobile,
       isEmailVerified,
-      isSubscribed
+      isSubscribed,
     });
-
-    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); // Replace 'your_secret_key' with your actual secret key
-
+    const token = jwt.sign({id: user.id}, 'abcdefghijklmn');
     const response = {
       code: 200,
       message: 'User created successfully',
@@ -108,7 +99,7 @@ const create = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     console.log(error.message, 'error');
-    return res.status(404).json({ message: error.message });
+    return res.status(404).json({message: error.message});
   }
 };
 
@@ -154,11 +145,6 @@ const login = async (req, res) => {
 const getCred = async (req, res) => {
   try {
     const users = await User.find();
-
-    if (!users || users.length === 0) {
-      return res.status(404).json({message: 'No users found'});
-    }
-
     const response = {
       code: 200,
       message: 'success',
@@ -167,26 +153,27 @@ const getCred = async (req, res) => {
 
     return res.status(200).json(response);
   } catch (error) {
-    console.log(error.message, 'error');
-    return res.status(500).json({message: 'Internal server error'});
+    console.error(error.message); // Log the error for debugging purposes.
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 
-
 const generatePairingCode = async (req, res) => {
   try {
-    const { deviceid } = req.body;
-    let parentDevice = await ParentDevice.findOne({ deviceid });
+    const {deviceid} = req.body;
+    let parentDevice = await ParentDevice.findOne({deviceid});
 
     if (parentDevice) {
-      const childData = await Child.find({ pairingCode: parentDevice.pairingCode });
+      const childData = await Child.find({
+        pairingCode: parentDevice.pairingCode,
+      });
       const response = {
         status: 200,
         message: 'Success',
         deviceid: deviceid,
         pairingCode: parentDevice.pairingCode,
-        childData: childData || [] // Initialize with an empty array
+        childData: childData || [], // Initialize with an empty array
       };
       return res.status(200).json(response);
     }
@@ -203,7 +190,7 @@ const generatePairingCode = async (req, res) => {
       message: 'Success',
       deviceid: deviceid,
       pairingCode: newPairingCode,
-      childData: []
+      childData: [],
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -212,17 +199,15 @@ const generatePairingCode = async (req, res) => {
   }
 };
 
-
-
 const generateNewPairingCode = () => {
-  const min = 10000; 
-  const max = 99999; 
+  const min = 10000;
+  const max = 99999;
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 const addChildApp = async (req, res) => {
   try {
-    const { deviceid, pairingCode, name, age } = req.body;
+    const {deviceid, pairingCode, name, age} = req.body;
     const childApp = new Child({
       pairingCode,
       deviceid,
@@ -230,7 +215,7 @@ const addChildApp = async (req, res) => {
       age,
     });
     const savedChild = await childApp.save();
-    const { _id, __v, ...responseData } = savedChild.toObject();
+    const {_id, __v, ...responseData} = savedChild.toObject();
     const response = {
       status: 200,
       message: 'Success',
@@ -243,13 +228,11 @@ const addChildApp = async (req, res) => {
   }
 };
 
-
-
 const pairChildDevice = async (req, res) => {
   try {
     const {deviceid, pairingCode, name, age} = req.body;
     const parentDevice = await ParentDevice.findOne({
-      pairingCode
+      pairingCode,
     });
 
     if (!parentDevice) {
@@ -263,12 +246,12 @@ const pairChildDevice = async (req, res) => {
       age,
     });
     const savedChild = await childApp.save();
-    const { _id, __v, ...responseData } = savedChild.toObject();
+    const {_id, __v, ...responseData} = savedChild.toObject();
 
     const response = {
       status: 200,
       message: 'Success',
-      ...responseData
+      ...responseData,
     };
     return res.status(200).json(response);
   } catch (error) {
@@ -276,7 +259,6 @@ const pairChildDevice = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
-
 
 const getChildDataByPairingCode = async (req, res) => {
   try {
@@ -317,20 +299,20 @@ const forgetpassword = async (req, res) => {
 
 const reset_password = async (req, res) => {
   try {
-    let { mobile, password, confirmPassword } = req.body;
+    let {mobile, password, confirmPassword} = req.body;
     if (password.length < 8) {
       return res
         .status(400)
-        .json({ message: 'Password length should be a minimum of 8 characters' });
+        .json({message: 'Password length should be a minimum of 8 characters'});
     }
     if (password !== confirmPassword) {
       return res
         .status(400)
-        .json({ message: 'Password and confirm password do not match' });
+        .json({message: 'Password and confirm password do not match'});
     }
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({mobile});
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({error: 'User not found'});
     }
     user.password = password;
     await user.save();
@@ -345,19 +327,18 @@ const reset_password = async (req, res) => {
   }
 };
 
-
-const fetchSubscribedPackages = async (deviceId, parentId) => {
-  try {
-    const subscribedPackages = await PackageModel.find({deviceId, parentId});
-    return subscribedPackages;
-  } catch (err) {
-    throw new Error('Error fetching subscribed packages: ' + err.message);
-  }
-};
-
 const createPackage = async (req, res) => {
   try {
-    const { price, off, numberOfDays, isPromoCode, promoCode, packageId, packageName, packageDetails } = req.body;
+    const {
+      price,
+      off,
+      numberOfDays,
+      isPromoCode,
+      promoCode,
+      packageId,
+      packageName,
+      packageDetails,
+    } = req.body;
     const newPackage = new PackageModel({
       price,
       off,
@@ -385,9 +366,9 @@ const createPackage = async (req, res) => {
 
 const filterPackagesByPromoCode = async (req, res) => {
   try {
-    const { promoCode } = req.body;
+    const {promoCode} = req.body;
 
-    const filteredPackages = await PackageModel.find({ promoCode });
+    const filteredPackages = await PackageModel.find({promoCode});
     const totalItems = filteredPackages.length;
     res.status(200).json({
       status: 200,
@@ -403,7 +384,6 @@ const filterPackagesByPromoCode = async (req, res) => {
     });
   }
 };
-
 
 const deletePackageById = async (req, res) => {
   try {
@@ -485,6 +465,14 @@ const getAllPackages = async (req, res) => {
   }
 };
 
+const fetchSubscribedPackages = async (deviceId, parentId) => {
+  try {
+    const subscribedPackages = await PackageModel.find({deviceId, parentId});
+    return subscribedPackages;
+  } catch (err) {
+    throw new Error('Error fetching subscribed packages: ' + err.message);
+  }
+};
 const getSubscribedPackages = async (deviceId, parentId) => {
   const packages = await fetchSubscribedPackages(deviceId, parentId);
   return packages;
