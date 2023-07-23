@@ -23,6 +23,7 @@ const {
 } = require('../../controllers/apicontroller');
 const {createChild} = require('../../controllers/child.controller');
 const {createApp} = require('../../controllers/app.controller.js');
+const {createPairing} = require('../../controllers/pairing.controller.js')
 const router = express.Router();
 
 router.route('/createUser').post(create);
@@ -42,6 +43,7 @@ router.route('/getPackages').get(getAllPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 router.post('/createChild', createChild);
-router.post('/createApp',createApp)
+router.post('/createApp',createApp);
+router.post('/createPairing',createPairing)
 
 module.exports = router;
