@@ -14,6 +14,7 @@ const {authLimiter} = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const {errorConverter, errorHandler} = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+require('dotenv').config();
 
 const app = express();
 
@@ -62,8 +63,8 @@ app.post('/sera/payment', async (req, res) => {
   try {
     const {amount} = req.body;
     const instance = new Razorpay({
-      key_id: 'rzp_test_XYwqCpEMLN449E',
-      key_secret: 'OWLVzaBFEImYojFKUATgrsdZ',
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
     const order = instance.orders.create({

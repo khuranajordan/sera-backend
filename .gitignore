@@ -4,8 +4,8 @@ node_modules
 # yarn error logs
 yarn-error.log
 
-# Environment varibales
-.env
+# # Environment varibales
+# .env
 
 # Code coverage
 coverage
