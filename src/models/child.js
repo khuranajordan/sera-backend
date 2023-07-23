@@ -14,6 +14,10 @@ const childSchema = new Schema({
       message: 'Pairing code must be 5 digits long.'
     }
   },
+  childId: {
+    type: String,
+    required: true
+  },
   deviceid: {
     type: String,
     required: true

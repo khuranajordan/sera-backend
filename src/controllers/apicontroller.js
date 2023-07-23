@@ -224,12 +224,14 @@ const generateNewPairingCode = () => {
 
 const addChildApp = async (req, res) => {
   try {
-    const {deviceid, pairingCode, name, age} = req.body;
+    const {deviceid, pairingCode, name, age,childId} = req.body;
+    const childIds = generateNewPairingCode();
     const childApp = new Child({
       pairingCode,
       deviceid,
       name,
       age,
+      childId:childIds
     });
     const savedChild = await childApp.save();
     const {_id, __v, ...responseData} = savedChild.toObject();
@@ -384,7 +386,6 @@ const createPackage = async (req, res) => {
 const filterPackagesByPromoCode = async (req, res) => {
   try {
     const {promoCode} = req.body;
-
     const filteredPackages = await PackageModel.find({promoCode});
     const totalItems = filteredPackages.length;
     res.status(200).json({
@@ -405,8 +406,6 @@ const filterPackagesByPromoCode = async (req, res) => {
 const deletePackageById = async (req, res) => {
   try {
     const {id} = req.params;
-
-    // Find the package by ID and delete it
     const deletedPackage = await PackageModel.findByIdAndDelete(id);
 
     if (!deletedPackage) {
@@ -416,7 +415,6 @@ const deletePackageById = async (req, res) => {
         message: 'Package not found',
       });
     }
-
     res.status(200).json({
       status: 200,
       message: 'Package deleted successfully',

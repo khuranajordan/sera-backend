@@ -29,7 +29,7 @@ const packageSchema = new mongoose.Schema({
   packageId: {
     type: String,
     required: true,
-    enum: ['monthly', 'quarterly', 'yearly'],
+    enum: ['Monthly', 'Quarterly', 'Yearly'], // Capitalized packageId values
   },
   packageName: {
     type: String,
