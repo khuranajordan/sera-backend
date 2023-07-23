@@ -25,6 +25,10 @@ const childSchema = new Schema({
   age: {
     type: Number,
     required: true
+  },
+  firebaseToken:{
+    type: String,
+    
   }
 });
 

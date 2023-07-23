@@ -224,12 +224,13 @@ const generateNewPairingCode = () => {
 
 const addChildApp = async (req, res) => {
   try {
-    const {deviceid, pairingCode, name, age} = req.body;
+    const {deviceid, pairingCode, name, age, firebaseToken} = req.body;
     const childApp = new Child({
       pairingCode,
       deviceid,
       name,
       age,
+      firebaseToken
     });
     const savedChild = await childApp.save();
     const {_id, __v, ...responseData} = savedChild.toObject();
