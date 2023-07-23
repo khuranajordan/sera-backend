@@ -3,24 +3,26 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const userValidation = require('../../validations/user.validation');
 const userController = require('../../controllers/user.controller');
-const { create, 
-    login, 
-    getCred, 
-    generatePairingCode,
-    addChildApp,
-    pairChildDevice,
-    getChildDataByPairingCode,
-    forgetpassword,
-    reset_password,
-    createPackage,
-    filterPackagesByPromoCode,
-    getAllPackages,
-    deletePackageById,
-    updatePackageById,
-    getSubscription,
-    postSubscription
- } = require('../../controllers/apicontroller');
- const {createChild} = require('../../controllers/child.controller')
+const {
+  create,
+  login,
+  getCred,
+  generatePairingCode,
+  addChildApp,
+  pairChildDevice,
+  getChildDataByPairingCode,
+  forgetpassword,
+  reset_password,
+  createPackage,
+  filterPackagesByPromoCode,
+  getAllPackages,
+  deletePackageById,
+  updatePackageById,
+  getSubscription,
+  postSubscription,
+} = require('../../controllers/apicontroller');
+const {createChild} = require('../../controllers/child.controller');
+const {createApp} = require('../../controllers/app.controller.js');
 const router = express.Router();
 
 router.route('/createUser').post(create);
@@ -39,6 +41,7 @@ router.route('/packages/:id').put(updatePackageById);
 router.route('/getPackages').get(getAllPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
-router.post('/createChild',createChild)
+router.post('/createChild', createChild);
+router.post('/createApp',createApp)
 
 module.exports = router;
