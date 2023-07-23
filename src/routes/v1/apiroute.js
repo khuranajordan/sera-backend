@@ -21,9 +21,13 @@ const {
   getSubscription,
   postSubscription,
 } = require('../../controllers/apicontroller');
-const {createChild} = require('../../controllers/child.controller');
-const {createApp} = require('../../controllers/app.controller.js');
-const {createPairing} = require('../../controllers/pairing.controller.js')
+
+const {createApp, 
+    AppUsageSending,
+    createChild,
+    childAppList,
+    AppUsageGetting
+} = require('../../controllers/app.controller.js');
 const router = express.Router();
 
 router.route('/createUser').post(create);
@@ -42,8 +46,15 @@ router.route('/packages/:id').put(updatePackageById);
 router.route('/getPackages').get(getAllPackages);
 router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
-router.post('/createChild', createChild);
+
+
+
 router.post('/createApp',createApp);
-router.post('/createPairing',createPairing)
+router.post('/createChild', createChild);AppUsageGetting
+router.post('/AppUsageSending',AppUsageSending)
+router.post('/AppUsageGetting',AppUsageGetting)
+
+router.post('/childAppList',childAppList)
+
 
 module.exports = router;

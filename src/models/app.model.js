@@ -10,6 +10,10 @@ const appSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  deviceid:{
+    type: Number,
+    required: true
+  },
   imageUrl: {
     type: String,
     required: true
@@ -22,12 +26,13 @@ const appSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  versionName: {
-    type: String,
+  version: {
+    type: Number,
     required: true
   },
   status: {
     type: Boolean,
+    default:false,
     required: true
   },
   versionCode: {

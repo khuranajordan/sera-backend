@@ -12,7 +12,7 @@ const childSchema = new mongoose.Schema({
     },
   },
   deviceid: {
-    type: String,
+    type: Number,
     required: true,
   },
   childId: {
@@ -21,10 +21,6 @@ const childSchema = new mongoose.Schema({
   },
   data: [
     {
-      imageUrl: {
-        type: String,
-        required: true,
-      },
       appName: {
         type: String,
         required: true,
@@ -33,16 +29,20 @@ const childSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      version: {
-        type: Number,
+      lastTimeUsed: {
+        type: String,
         required: true,
       },
-      status: {
-        type: Boolean,
+      startTime: {
+        type: String,
+        required: true,
+      },  
+      endTime: {
+        type: String,
         required: true,
       },
-      versionCode: {
-        type: Number,
+      totalTime: {
+        type: String,
         required: true,
       },
     },
