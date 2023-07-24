@@ -33,7 +33,6 @@ const createApp = async (req, res) => {
   }
 };
 
-
 const childAppList = async (req, res) =>{
   try {
     let {parentCode,childId } =  req.body
@@ -67,9 +66,25 @@ const AppUsageGetting = async (req, res) =>{
 
 const AppUsageSending = async (req, res) => {
   try {
+    let{pairingcodeforchild , childId} =  req.body
+    let data = await ChildModel.find({pairingcodeforchild, childId})
+    if(!data){
     const pairingData = req.body;
     const pairing = await ChildModel.create(pairingData);
     res.status(201).json(pairing);
+    }
+    else{
+      const pairingData = req.body;
+    var pairing = await ChildModel.updateOne({pairingcodeforchild,childId},
+     { $set:{
+      pairingData
+    }}
+    
+    );
+    let data = await ChildModel.find({pairingcodeforchild, childId})
+    res.status(201).json(data);
+    }
+   
   } catch (error) {
     console.log(error.message);
     res.status(500).json( error.message );
