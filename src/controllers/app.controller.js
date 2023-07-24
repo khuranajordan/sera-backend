@@ -6,6 +6,10 @@ const ChildModel = require('../models/child.model.js');
 const createApp = async (req, res) => {
   try {
     const { parentCode, childId, deviceid, imageUrl, appName, packageName, version, status, versionCode } = req.body;
+
+    if (!parentCode || !childId || !deviceid || !imageUrl || !appName || !packageName || !version || !versionCode) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
     const newApp = new AppModel({
       parentCode,
       childId,
@@ -29,6 +33,7 @@ const createApp = async (req, res) => {
   }
 };
 
+
 const childAppList = async (req, res) =>{
   try {
     let {parentCode,childId } =  req.body
@@ -36,9 +41,7 @@ const childAppList = async (req, res) =>{
     if(!data){
       return res.status(404).json({error: 'parent Code and Child Id not found'});
     }
-    
     return res.status(200).json(data);
-
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ error: 'Internal server error' });

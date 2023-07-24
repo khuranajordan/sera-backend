@@ -48,13 +48,12 @@ router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
 
-
+router.post('/childAppList',childAppList)
 router.post('/createApp',createApp);
-router.post('/createChild', createChild);AppUsageGetting
+router.post('/createChild', createChild);
 router.post('/AppUsageSending',AppUsageSending)
 router.post('/AppUsageGetting',AppUsageGetting)
 
-router.post('/childAppList',childAppList)
 
 
 module.exports = router;
