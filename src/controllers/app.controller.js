@@ -5,8 +5,8 @@ const ChildModel = require('../models/child.model.js');
 
 const createApp = async (req, res) => {
   try {
-    const { parentCode, childId, deviceid, imageUrl, appName, packageName, version, status, versionCode } = req.body;
-
+    const { parentCode, childId, deviceid, appName, packageName, version, status, versionCode } = req.body;
+    const imageUrl = req.file.buffer; 
     if (!parentCode || !childId || !deviceid || !imageUrl || !appName || !packageName || !version || !versionCode) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -21,7 +21,9 @@ const createApp = async (req, res) => {
       status,
       versionCode
     });
+    
     const savedApp = await newApp.save();
+    
     res.status(201).json({
       status: 'success',
       message: 'App data posted successfully',
@@ -32,6 +34,7 @@ const createApp = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 
 const childAppList = async (req, res) =>{
