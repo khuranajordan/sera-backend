@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define the schema
 const appSchema = new mongoose.Schema({
   parentCode: {
     type: Number,
@@ -14,7 +15,7 @@ const appSchema = new mongoose.Schema({
     required: true
   },
   imageUrl: {
-    type: Buffer, // Change the type to Buffer to store bitmap
+    type: String,
     required: true
   },
   appName: {
@@ -31,7 +32,7 @@ const appSchema = new mongoose.Schema({
   },
   status: {
     type: Boolean,
-    default: false,
+    default:false,
     required: true
   },
   versionCode: {
@@ -41,4 +42,5 @@ const appSchema = new mongoose.Schema({
 });
 
 const AppModel = mongoose.model('App', appSchema);
+
 module.exports = AppModel;
