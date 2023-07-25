@@ -33,19 +33,26 @@ const createApp = async (req, res) => {
   }
 };
 
-const childAppList = async (req, res) =>{
+const childAppList = async (req, res) => {
   try {
-    let {parentCode,childId } =  req.body
-    let data  =  await AppModel.find({parentCode:parentCode,childId:childId} )
-    if(!data){
-      return res.status(404).json({error: 'parent Code and Child Id not found'});
+    let { parentCode, childId } = req.body;
+    let data = await AppModel.find({ parentCode: parentCode, childId: childId });
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Parent Code and Child Id not found' });
     }
-    return res.status(200).json(data);
+
+    return res.status(200).json({
+      status:200,
+      message:"success",
+      data:data
+    }); // Use "data" as the key to wrap the response array
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
-} 
+};
+
 
 const AppUsageGetting = async (req, res) =>{
   try {
@@ -55,7 +62,11 @@ const AppUsageGetting = async (req, res) =>{
       return res.status(404).json({error: 'parent Code and Child Id not found'});
     }
     
-    return res.status(200).json(data);
+    return res.status(200).json({
+      "status": 1,
+      "message": "Success",
+      "data":data
+    });
 
   } catch (error) {
     console.log(error.message);
