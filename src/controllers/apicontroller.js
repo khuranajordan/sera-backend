@@ -196,14 +196,15 @@ const generateNewPairingCode = () => {
 
 const addChildApp = async (req, res) => {
   try {
-    const {deviceid, pairingCode, name, age,childId} = req.body;
+    const {deviceid, pairingCode, name, age,childId, device_token} = req.body;
     const childIds = generateNewPairingCode();
     const childApp = new Child({
       pairingCode,
       deviceid,
       name,
       age,
-      childId:childIds
+      childId:childIds,
+      device_token
     });
     const savedChild = await childApp.save();
     const {_id, __v, ...responseData} = savedChild.toObject();

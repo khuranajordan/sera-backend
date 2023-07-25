@@ -30,7 +30,7 @@ const childSchema = new Schema({
     type: Number,
     required: true
   },
-  firebaseToken:{
+  device_token:{
     type: String,
     
   }

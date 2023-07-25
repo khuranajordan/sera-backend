@@ -1,6 +1,7 @@
 const AppModel = require('../models/app.model.js');
 const PairingModel = require('../models/pairing.model.js');
 const ChildModel = require('../models/child.model.js');
+const {Child} = require('../models/child');
 
 const FCM = require('fcm-node');
 var admin = require('firebase-admin');
@@ -53,7 +54,7 @@ const send_push_notification = async function (
 const BlockChildApp = async (req, res) => {
   try {
 
-    let reciever =  await User.find({mobile:req.body.mobile})
+    let reciever =  await Child.find({childId:req.body.childId})
     console.log(reciever);
    console.log(reciever[0].device_token);
     const {
