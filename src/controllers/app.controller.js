@@ -104,20 +104,23 @@ const AppUsageSending = async (req, res) => {
 
 const SendChildAppList = async (req, res) => {
   try {
-    await ChildModel.deleteMany({});
     const newChild = new ChildModel(req.body);
     const savedChild = await newChild.save();
-    res.status(201).json({
+    const { pairingcodeforchild, deviceid, childId, data } = savedChild;
+    const responseObj = {
       status: 200,
-      message: 'Success',
-      data: savedChild,
-    });
+      message: "Success",
+      pairingcodeforchild,
+      deviceid,
+      childId,
+      data,
+    };
+
+    res.status(201).json(responseObj);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-module.exports = SendChildAppList;
 
 
 

@@ -44,5 +44,4 @@ const childSchema = new mongoose.Schema({
 });
 
 const ChildModel = mongoose.model('ChildApp', childSchema);
-
 module.exports = ChildModel;
