@@ -2,8 +2,60 @@ const AppModel = require('../models/app.model.js');
 const PairingModel = require('../models/pairing.model.js');
 const ChildModel = require('../models/child.model.js');
 
+const FCM = require('fcm-node');
+var admin = require('firebase-admin');
+
+var serviceAccount = require('../controllers/sera-a3a21-firebase-adminsdk-uxfg8-dbe56f1aa3.json');
+const User = require('../models/user.model.js');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+//push notification function for andriod
+const send_push_notification = async function (
+  device_token,
+  notification_data,
+) {
+  try {
+    if (device_token !== '' && !Array.isArray(device_token)) {
+      console.log(
+        'device_token--------------------------------------',
+        device_token,
+      );
+      // console.log("{{{{{{{{{{{{{{{{{{{{{")
+
+      var new_message = {
+        to: device_token,
+        data: notification_data,
+      };
+      var serverKey =
+        'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
+      var fcm = new FCM(serverKey);
+
+      fcm.send(new_message, function (err, response) {
+        if (err) {
+          console.log(
+            err,
+            'notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr',
+          );
+        } else {
+          console.log('Successfully sent with response: ', response);
+        }
+      });
+    } else {
+      console.log('Invalid device_token');
+    }
+  } catch (err) {
+    throw new Error(`Error while decoding token::: ${err}`);
+  }
+};
+
 const BlockChildApp = async (req, res) => {
   try {
+
+    let reciever =  await User.find({mobile:req.body.mobile})
+   
     const {
       parentCode,
       childId,
@@ -40,6 +92,16 @@ const BlockChildApp = async (req, res) => {
       versionCode,
     });
     const savedApp = await newApp.save();
+
+    var message = `${appName} Block the app`;
+    var notification_data = {
+      // "problemId":requestData.problemId,
+      message: message,
+      push_type: 1,
+    };
+
+    await send_push_notification(reciever.deviceToken, notification_data);
+
     res.status(201).json({
       status: 'success',
       message: 'App data posted successfully',

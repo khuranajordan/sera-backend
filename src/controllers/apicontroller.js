@@ -3,52 +3,8 @@ const jwt = require('jsonwebtoken');
 const {ParentDevice} = require('../models/parentDevice');
 const {Child} = require('../models/child');
 const PackageModel = require('../models/package.model');
-var admin = require('firebase-admin');
 
-var serviceAccount = require('../controllers/sera-a3a21-firebase-adminsdk-uxfg8-dbe56f1aa3.json');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-//push notification function for andriod
-const send_push_notification = async function (
-  device_token,
-  notification_data,
-) {
-  try {
-    if (device_token !== '' && !Array.isArray(device_token)) {
-      console.log(
-        'device_token--------------------------------------',
-        device_token,
-      );
-      // console.log("{{{{{{{{{{{{{{{{{{{{{")
-
-      var new_message = {
-        to: device_token,
-        data: notification_data,
-      };
-      var serverKey =
-        'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
-      var fcm = new FCM(serverKey);
-
-      fcm.send(new_message, function (err, response) {
-        if (err) {
-          console.log(
-            err,
-            'notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr',
-          );
-        } else {
-          console.log('Successfully sent with response: ', response);
-        }
-      });
-    } else {
-      console.log('Invalid device_token');
-    }
-  } catch (err) {
-    throw new Error(`Error while decoding token::: ${err}`);
-  }
-};
 
 const create = async (req, res) => {
   try {
@@ -60,6 +16,7 @@ const create = async (req, res) => {
       mobile,
       isEmailVerified,
       isSubscribed,
+      device_token
     } = req.body;
 
     if (
@@ -69,7 +26,7 @@ const create = async (req, res) => {
       !userisparent ||
       !mobile ||
       !isEmailVerified ||
-      !isSubscribed
+      !isSubscribed 
     ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -101,6 +58,7 @@ const create = async (req, res) => {
       mobile,
       isEmailVerified,
       isSubscribed,
+      device_token
     });
 
     try {
@@ -145,7 +103,17 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({message: 'Password does not match'});
     }
-
+    await User.updateOne(
+      {
+        _id: user.id,
+      },
+      {
+        $set: {
+          
+          device_token: req.body.device_token,
+        },
+      }
+    );
     const token = jwt.sign(user.id, 'abcdefghijklmn');
 
     const response = {
