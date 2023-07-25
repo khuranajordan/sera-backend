@@ -29,18 +29,17 @@ const send_push_notification = async function (
         to: device_token,
         data: notification_data,
       };
+      console.log(new_message);
       var serverKey =
-        'AAAAQmBk1Ns:APA91bEHMhIsFZSpUnRjEy8l25GVrbVVVTHg-RIzIXi8kCjjm2K67yJst-Y-vr-8v3JQtlWAUVxY16Knn0E7BsBAaZZqX6MBtJKZIubHerFsbVAlZ-RdKuarCMp21jFOvalF991z95XQ';
+        'AAAAcq8kSY0:APA91bEQ-SQnIV5SK9-nJHe40eliMWRd2TYom-QohlRYC0p1VryXqBO9ynt7-P4RBo2jhVMlVooWS5dWScgimAzk1DeCdb3HShjGNyf7naD4j2Ldt12j1zZEdpzujC1KiHOwQfbt_ZgE';
       var fcm = new FCM(serverKey);
-
       fcm.send(new_message, function (err, response) {
         if (err) {
-          console.log(
-            err,
-            'notifi eroorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr',
-          );
+          console.error('Error sending push notification:', err);
+          // Log additional details from the response (if available)
+          console.error('FCM Response:', response);
         } else {
-          console.log('Successfully sent with response: ', response);
+          console.log('Successfully sent with response:', response);
         }
       });
     } else {
@@ -55,7 +54,8 @@ const BlockChildApp = async (req, res) => {
   try {
 
     let reciever =  await User.find({mobile:req.body.mobile})
-   
+    console.log(reciever);
+   console.log(reciever[0].device_token);
     const {
       parentCode,
       childId,
@@ -100,7 +100,7 @@ const BlockChildApp = async (req, res) => {
       push_type: 1,
     };
 
-    await send_push_notification(reciever.deviceToken, notification_data);
+    await send_push_notification(reciever[0].device_token, notification_data);
 
     res.status(201).json({
       status: 'success',

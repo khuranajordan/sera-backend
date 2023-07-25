@@ -109,7 +109,6 @@ const login = async (req, res) => {
       },
       {
         $set: {
-          
           device_token: req.body.device_token,
         },
       }
