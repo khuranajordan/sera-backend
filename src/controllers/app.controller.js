@@ -104,17 +104,21 @@ const AppUsageSending = async (req, res) => {
 
 const SendChildAppList = async (req, res) => {
   try {
+    await ChildModel.deleteMany({});
     const newChild = new ChildModel(req.body);
     const savedChild = await newChild.save();
     res.status(201).json({
-      "status": 1,
-      "message": "Success",
-      data:savedChild  
-    }); 
+      status: 200,
+      message: 'Success',
+      data: savedChild,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+module.exports = SendChildAppList;
+
 
 
 module.exports = {

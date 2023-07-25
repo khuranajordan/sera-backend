@@ -1,52 +1,46 @@
 const mongoose = require('mongoose');
+
+const childDataSchema = new mongoose.Schema({
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+  appName: {
+    type: String,
+    required: true,
+  },
+  packagename: {
+    type: String,
+    required: true,
+  },
+  version: {
+    type: Number,
+    required: true,
+  },
+  status: {
+    type: Boolean,
+    required: true,
+  },
+  versionCode: {
+    type: Number,
+    required: true,
+  },
+});
+
 const childSchema = new mongoose.Schema({
   pairingcodeforchild: {
     type: Number,
     required: true,
-    validate: {
-      validator: function (value) {
-        const code = value.toString();
-        return code.length === 5;
-      },
-      message: 'Pairing code must be 5 digits long.',
-    },
   },
   deviceid: {
-    type: Number,
+    type: String,
     required: true,
   },
   childId: {
     type: Number,
     required: true,
   },
-  data: [
-    {
-      appName: {
-        type: String,
-        required: true,
-      },
-      packagename: {
-        type: String,
-        required: true,
-      },
-      lastTimeUsed: {
-        type: String,
-        required: true,
-      },
-      startTime: {
-        type: String,
-        required: true,
-      },  
-      endTime: {
-        type: String,
-        required: true,
-      },
-      totalTime: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  data: [childDataSchema],
 });
 
 const ChildModel = mongoose.model('ChildApp', childSchema);

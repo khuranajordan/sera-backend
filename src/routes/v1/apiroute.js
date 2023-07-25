@@ -48,9 +48,9 @@ router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
 
-router.post('/ChildAppList',childAppList)
+router.post('/ChildAppList',ChildAppList)
 router.post('/BlockChildApp',BlockChildApp);
-router.post('/SendChildAppList', sendChildAppList);
+router.post('/SendChildAppList', SendChildAppList);
 router.post('/AppUsageSending',AppUsageSending)
 router.post('/AppUsageGetting',AppUsageGetting)
 
