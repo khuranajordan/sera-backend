@@ -60,37 +60,27 @@ const BlockChildApp = async (req, res) => {
     const {
       parentCode,
       childId,
-      deviceid,
-      imageUrl,
       appName,
       packageName,
-      version,
+
       status,
-      versionCode,
     } = req.body;
 
     if (
       !parentCode ||
       !childId ||
-      !deviceid ||
-      !imageUrl ||
       !appName ||
-      !packageName ||
-      !version ||
-      !versionCode
+      !packageName 
     ) {
       return res.status(400).json({error: 'All fields are required'});
     }
     const newApp = new AppModel({
       parentCode,
       childId,
-      deviceid,
-      imageUrl,
+
       appName,
       packageName,
-      version,
       status,
-      versionCode,
     });
     const savedApp = await newApp.save();
 
