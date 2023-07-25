@@ -3,7 +3,7 @@ const PairingModel = require('../models/pairing.model.js');
 const ChildModel = require('../models/child.model.js'); 
 
 
-const createApp = async (req, res) => {
+const BlockChildApp = async (req, res) => {
   try {
     const { parentCode, childId, deviceid, imageUrl, appName, packageName, version, status, versionCode } = req.body;
 
@@ -33,7 +33,7 @@ const createApp = async (req, res) => {
   }
 };
 
-const childAppList = async (req, res) => {
+const ChildAppList = async (req, res) => {
   try {
     let { parentCode, childId } = req.body;
     let data = await AppModel.find({ parentCode: parentCode, childId: childId });
@@ -102,13 +102,14 @@ const AppUsageSending = async (req, res) => {
   }
 };
 
-const createChild = async (req, res) => {
+const SendChildAppList = async (req, res) => {
   try {
     const newChild = new ChildModel(req.body);
     const savedChild = await newChild.save();
     res.status(201).json({
       "status": 1,
-      "message": "Success"    
+      "message": "Success",
+      data:savedChild  
     }); 
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -117,9 +118,9 @@ const createChild = async (req, res) => {
 
 
 module.exports = {
-  createApp,
+  BlockChildApp,
   AppUsageSending,
-  createChild,
-  childAppList,
+  SendChildAppList,
+  ChildAppList,
   AppUsageGetting
 };

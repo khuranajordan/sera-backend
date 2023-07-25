@@ -22,10 +22,10 @@ const {
   postSubscription,
 } = require('../../controllers/apicontroller');
 
-const {createApp, 
+const {BlockChildApp, 
     AppUsageSending,
-    createChild,
-    childAppList,
+    SendChildAppList,
+     ChildAppList,
     AppUsageGetting
 } = require('../../controllers/app.controller.js');
 const router = express.Router();
@@ -48,9 +48,9 @@ router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
 
-router.post('/childAppList',childAppList)
-router.post('/createApp',createApp);
-router.post('/createChild', createChild);
+router.post('/ChildAppList',childAppList)
+router.post('/BlockChildApp',BlockChildApp);
+router.post('/SendChildAppList', sendChildAppList);
 router.post('/AppUsageSending',AppUsageSending)
 router.post('/AppUsageGetting',AppUsageGetting)
 
