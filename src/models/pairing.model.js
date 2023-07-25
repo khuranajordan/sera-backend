@@ -4,44 +4,48 @@ const mongoose = require('mongoose');
 const dataSchema = new mongoose.Schema({
   appName: {
     type: String,
-    required: true
+    required: true,
   },
   packagename: {
     type: String,
-    required: true
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
   },
   lastTimeUsed: {
     type: String,
-    required: true
+    required: true,
   },
   startTime: {
     type: String,
-    required: true
+    required: true,
   },
   endTime: {
     type: String,
-    required: true
+    required: true,
   },
   totalTime: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const pairingSchema = new mongoose.Schema({
   pairingcodeforchild: {
     type: Number,
-    required: true
+    required: true,
   },
   deviceid: {
     type: String,
-    required: true
+    required: true,
   },
   childId: {
     type: Number,
-    required: true
+    required: true,
   },
-  data: [dataSchema] // Using the dataSchema as an array of objects
+  data: [dataSchema], // Using the dataSchema as an array of objects
 });
 
 // Create the model
