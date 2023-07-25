@@ -14,7 +14,7 @@ const childDataSchema = new mongoose.Schema({
     required: true,
   },
   version: {
-    type: Number,
+    type: String,
     required: true,
   },
   status: {
@@ -22,7 +22,7 @@ const childDataSchema = new mongoose.Schema({
     required: true,
   },
   versionCode: {
-    type: Number,
+    type: String,
     required: true,
   },
 });
