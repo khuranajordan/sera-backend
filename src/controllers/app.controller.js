@@ -54,25 +54,26 @@ const ChildAppList = async (req, res) => {
 };
 
 
-const AppUsageGetting = async (req, res) =>{
+const AppUsageGetting = async (req, res) => {
   try {
-    let {pairingcodeforchild,childId } =  req.body
-    let data  =  await ChildModel.find({pairingcodeforchild, childId:childId} )
-    if(!data){
-      return res.status(404).json({error: 'parent Code and Child Id not found'});
-    }
-    
-    return res.status(200).json({
-      "status": 1,
-      "message": "Success",
-      "data":data
-    });
+    const { pairingcodeforchild, childId } = req.body;
+    const data = await ChildModel.find({ pairingcodeforchild, childId });
 
+    if (data.length === 0) {
+      return res.status(404).json({ error: 'Parent Code and Child Id not found' });
+    }
+
+    return res.status(200).json({
+      status: 1,
+      message: 'Success',
+      data: data,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
-} 
+};
+
 
 
 const AppUsageSending = async (req, res) => {
@@ -113,7 +114,7 @@ const SendChildAppList = async (req, res) => {
       pairingcodeforchild,
       deviceid,
       childId,
-      data,
+      data
     };
 
     res.status(201).json(responseObj);
