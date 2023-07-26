@@ -84,12 +84,11 @@ const BlockChildApp = async (req, res) => {
     });
     const savedApp = await newApp.save();
 
-    var message = `${appName} Block the app`;
     var notification_data = {
       // "problemId":requestData.problemId,
-      body: message,
-      title:"test notification",
-      push_type: 1,
+      body: packageName,
+      title:appName,
+      status: status,
     };
 
     await send_push_notification(reciever[0].device_token, notification_data);
