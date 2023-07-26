@@ -108,7 +108,7 @@ const BlockChildApp = async (req, res) => {
 
 const AppUsageSending = async (req, res) => {
   try {
-    await ChildModel.deleteMany({});
+    await PairingModel.deleteMany({});
     const newPair = new PairingModel(req.body);
     const savedPaired = await newPair.save();
     const { pairingcodeforchild, deviceid, childId, data } = savedPaired;
@@ -160,6 +160,7 @@ const AppUsageGetting = async (req, res) => {
 
 const SendChildAppList = async (req, res) => {
   try {
+    await ChildModel.deleteMany({});
     const { pairingcodeforchild, deviceid, childId, data } = req.body;
     if (!pairingcodeforchild || !deviceid || !childId || !data) {
       return res.status(400).json({ error: 'Missing required fields' });
