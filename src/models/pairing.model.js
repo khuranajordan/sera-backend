@@ -10,10 +10,6 @@ const dataSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
   lastTimeUsed: {
     type: String,
     required: true,

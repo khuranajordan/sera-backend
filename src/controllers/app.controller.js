@@ -13,43 +13,43 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-//push notification function for andriod
-const send_push_notification = async function (
-  device_token,
-  notification_data,
-) {
-  try {
-    if (device_token !== '' && !Array.isArray(device_token)) {
-      console.log(
-        'device_token--------------------------------------',
-        device_token,
-      );
-      // console.log("{{{{{{{{{{{{{{{{{{{{{")
+  //push notification function for andriod
+  const send_push_notification = async function (
+    device_token,
+    notification_data,
+  ) {
+    try {
+      if (device_token !== '' && !Array.isArray(device_token)) {
+        console.log(
+          'device_token--------------------------------------',
+          device_token,
+        );
+        // console.log("{{{{{{{{{{{{{{{{{{{{{")
 
-      var new_message = {
-        to: device_token,
-        data: notification_data,
-      };
-      console.log(new_message);
-      var serverKey =
-        'AAAAcq8kSY0:APA91bEQ-SQnIV5SK9-nJHe40eliMWRd2TYom-QohlRYC0p1VryXqBO9ynt7-P4RBo2jhVMlVooWS5dWScgimAzk1DeCdb3HShjGNyf7naD4j2Ldt12j1zZEdpzujC1KiHOwQfbt_ZgE';
-      var fcm = new FCM(serverKey);
-      fcm.send(new_message, function (err, response) {
-        if (err) {
-          console.error('Error sending push notification:', err);
-          // Log additional details from the response (if available)
-          console.error('FCM Response:', response);
-        } else {
-          console.log('Successfully sent with response:', response);
-        }
-      });
-    } else {
-      console.log('Invalid device_token');
+        var new_message = { 
+          to: device_token,
+          data: notification_data,
+        };
+        console.log(new_message);
+        var serverKey =
+          'AAAAcq8kSY0:APA91bEQ-SQnIV5SK9-nJHe40eliMWRd2TYom-QohlRYC0p1VryXqBO9ynt7-P4RBo2jhVMlVooWS5dWScgimAzk1DeCdb3HShjGNyf7naD4j2Ldt12j1zZEdpzujC1KiHOwQfbt_ZgE';
+        var fcm = new FCM(serverKey);
+        fcm.send(new_message, function (err, response) {
+          if (err) {
+            console.error('Error sending push notification:', err);
+            // Log additional details from the response (if available)
+            console.error('FCM Response:', response);
+          } else {
+            console.log('Successfully sent with response:', response);
+          }
+        });
+      } else {
+        console.log('Invalid device_token');
+      }
+    } catch (err) {
+      throw new Error(`Error while decoding token::: ${err}`);
     }
-  } catch (err) {
-    throw new Error(`Error while decoding token::: ${err}`);
-  }
-};
+  };
 
 const BlockChildApp = async (req, res) => {
   try {
@@ -87,7 +87,8 @@ const BlockChildApp = async (req, res) => {
     var message = `${appName} Block the app`;
     var notification_data = {
       // "problemId":requestData.problemId,
-      message: message,
+      body: message,
+      title:"test notification",
       push_type: 1,
     };
 
