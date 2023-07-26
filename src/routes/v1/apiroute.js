@@ -48,11 +48,11 @@ router.route('/getSubscription').post(getSubscription);
 router.route('/postSubscription').post(postSubscription);
 
 
-router.post('/ChildAppList',ChildAppList)
 router.post('/BlockChildApp',BlockChildApp);
+router.post('/AppUsageSending',AppUsageSending);
+router.post('/AppUsageGetting',AppUsageGetting);
 router.post('/SendChildAppList', SendChildAppList);
-router.post('/AppUsageSending',AppUsageSending)
-router.post('/AppUsageGetting',AppUsageGetting)
+router.post('/ChildAppList',ChildAppList)
 
 
 

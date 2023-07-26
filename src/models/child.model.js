@@ -43,5 +43,5 @@ const childSchema = new mongoose.Schema({
   data: [childDataSchema],
 });
 
-const ChildModel = mongoose.model('ChildApp', childSchema);
+const ChildModel = mongoose.model('ChildData', childSchema); // Corrected the model name here
 module.exports = ChildModel;

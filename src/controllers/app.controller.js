@@ -104,36 +104,29 @@ const BlockChildApp = async (req, res) => {
   }
 };
 
-const ChildAppList = async (req, res) => {
+
+
+const AppUsageSending = async (req, res) => {
   try {
-    const {pairingcodeforchild, childId} = req.body;
-    const data = await ChildModel.find({pairingcodeforchild, childId});
-
-    if (data.length === 0) {
-      return res
-        .status(404)
-        .json({error: 'Parent Code and Child Id not found'});
-    }
-    const {
-      pairingcodeforchild: pairedCode,
-      deviceid,
-      childId: childIdFromData,
-    } = data[0];
-
-    return res.status(200).json({
-      status: 1,
+    await ChildModel.deleteMany({});
+    const newPair = new PairingModel(req.body);
+    const savedPaired = await newPair.save();
+    const { pairingcodeforchild, deviceid, childId, data } = savedPaired;
+    const responseObj = {
+      status: 200,
       message: 'Success',
-      pairingcodeforchild: pairedCode, // Include the pairingcodeforchild in the response with the new variable name
-      deviceid, // Include the deviceid in the response
-      childId: childIdFromData, // Include the childId in the response with the new variable name
-      data: data[0].data, // Include the data array in the response
-    });
+      pairingcodeforchild,
+      deviceid,
+      childId,
+      data,
+    };
+
+    res.status(201).json(responseObj);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({error: 'Internal server error'});
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
-
 const AppUsageGetting = async (req, res) => {
   try {
     const {pairingcodeforchild, childId} = req.body;
@@ -164,47 +157,64 @@ const AppUsageGetting = async (req, res) => {
   }
 };
 
-const AppUsageSending = async (req, res) => {
+
+const SendChildAppList = async (req, res) => {
   try {
-    await ChildModel.deleteMany({});
-    const newPair = new PairingModel(req.body);
-    const savedPaired = await newPair.save();
-    const { pairingcodeforchild, deviceid, childId, data } = savedPaired;
-    const responseObj = {
-      status: 200,
-      message: 'Success',
+    const { pairingcodeforchild, deviceid, childId, data } = req.body;
+    if (!pairingcodeforchild || !deviceid || !childId || !data) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const newChild = new ChildModel({
       pairingcodeforchild,
       deviceid,
       childId,
       data,
+    });
+
+    const savedChild = await newChild.save();
+    const responseObj = {
+      status: 201,
+      message: 'Success',
+      pairingcodeforchild: savedChild.pairingcodeforchild,
+      deviceid: savedChild.deviceid,
+      childId: savedChild.childId,
+      data: savedChild.data,
     };
 
     res.status(201).json(responseObj);
   } catch (error) {
-    console.error(error);
+    console.error('Error saving child:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-
-const SendChildAppList = async (req, res) => {
+const ChildAppList = async (req, res) => {
   try {
-    await ChildModel.deleteMany({});
+    const {pairingcodeforchild, childId} = req.body;
+    const data = await ChildModel.find({pairingcodeforchild, childId});
 
-    const newChild = new ChildModel(req.body);
-    const savedChild = await newChild.save();
-    const {pairingcodeforchild, deviceid, childId, data} = savedChild;
-    const responseObj = {
-      status: 200,
-      message: 'Success',
-      pairingcodeforchild,
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({error: 'Parent Code and Child Id not found'});
+    }
+    const {
+      pairingcodeforchild: pairedCode,
       deviceid,
-      childId,
-      data,
-    };
+      childId: childIdFromData,
+    } = data[0];
 
-    res.status(201).json(responseObj);
+    return res.status(200).json({
+      status: 1,
+      message: 'Success',
+      pairingcodeforchild: pairedCode, // Include the pairingcodeforchild in the response with the new variable name
+      deviceid, // Include the deviceid in the response
+      childId: childIdFromData, // Include the childId in the response with the new variable name
+      data: data[0].data, // Include the data array in the response
+    });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({error: 'Internal server error'});
   }
 };
