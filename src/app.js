@@ -14,6 +14,7 @@ const {authLimiter} = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const {errorConverter, errorHandler} = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -23,6 +24,19 @@ if (config.env !== 'test') {
   app.use(morgan.errorHandler);
 }
 
+
+//--------------------------------
+// Set View Engine
+//--------------------------------
+app.set('views', path.join(__dirname, 'views'));
+
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
+
+// Define the route for the privacy policy page
+app.get('/privacypolicy', (req, res) => {
+  res.render('privacypolicy');
+});
 // set security HTTP headers
 app.use(helmet());
 
