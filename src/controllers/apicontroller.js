@@ -27,9 +27,9 @@ const create = async (req, res) => {
     ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-    if (await User.isEmailTaken(email)) {
-      return res.status(400).json({ message: 'Email is already taken' });
-    }
+    // if (await User.isEmailTaken(email)) {
+    //   return res.status(400).json({ message: 'Email is already taken' });
+    // }
     if (await User.isMobileTaken(mobile)) {
       return res.status(400).json({ message: 'Mobile number is already taken' });
     }
