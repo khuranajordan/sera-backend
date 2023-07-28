@@ -37,7 +37,6 @@ const userSchema = mongoose.Schema(
     },
     confirmPassword: {
       type: String,
-      required: true,
       trim: true,
       validate(value) {
         if (value !== this.password) {

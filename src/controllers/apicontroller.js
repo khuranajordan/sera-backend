@@ -1,4 +1,4 @@
-const {User} = require('../models');
+const User = require('../models/user.model.js');
 const jwt = require('jsonwebtoken');
 const {ParentDevice} = require('../models/parentDevice');
 const {Child} = require('../models/child');
@@ -18,7 +18,6 @@ const create = async (req, res) => {
       isSubscribed,
       device_token
     } = req.body;
-
     if (
       !name ||
       !email ||
@@ -26,30 +25,17 @@ const create = async (req, res) => {
       !userisparent ||
       !mobile ||
       !isEmailVerified ||
-      !isSubscribed 
+      !isSubscribed ||
+      !device_token
     ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
-    if (password.length < 8) {
-      return res
-        .status(400)
-        .json({ message: 'Password length should be a minimum of 8 characters' });
-    }
-
-    // Check if email or mobile number is already taken
     if (await User.isEmailTaken(email)) {
       return res.status(400).json({ message: 'Email is already taken' });
     }
-
     if (await User.isMobileTaken(mobile)) {
       return res.status(400).json({ message: 'Mobile number is already taken' });
     }
-
     const user = new User({
       name,
       email,
@@ -58,16 +44,10 @@ const create = async (req, res) => {
       mobile,
       isEmailVerified,
       isSubscribed,
-      device_token
+      device_token,
     });
-
-    try {
-      await user.save();
-    } catch (error) {
-      throw new Error('Error creating user');
-    }
-
-    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); // Replace 'your_secret_key' with your actual secret key
+    await user.save();
+    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); 
     const response = {
       code: 200,
       message: 'User created successfully',
@@ -76,13 +56,16 @@ const create = async (req, res) => {
         token: token,
       },
     };
-
     return res.status(200).json(response);
   } catch (error) {
-    console.log(error.message, 'error');
+    console.error(error.message);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+
+
 const login = async (req, res) => {
   try {
     const {mobile, userisparent, password} = req.body;

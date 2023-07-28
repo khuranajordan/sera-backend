@@ -135,7 +135,7 @@ const AppUsageGetting = async (req, res) => {
     if (data.length === 0) {
       return res
         .status(404)
-        .json({error: 'Parent Code and Child Id not found'});
+        .json({error: 'pairingcodeforchild and Child Id not found'});
     }
     const {
       pairingcodeforchild: pairedCode,
@@ -194,11 +194,11 @@ const ChildAppList = async (req, res) => {
   try {
     const {pairingcodeforchild, childId} = req.body;
     const data = await ChildModel.find({pairingcodeforchild, childId});
-
+    console.log(data)
     if (data.length === 0) {
       return res
         .status(404)
-        .json({error: 'Parent Code and Child Id not found'});
+        .json({error: 'pairingcodeforchild and childId not found'});
     }
     const {
       pairingcodeforchild: pairedCode,
