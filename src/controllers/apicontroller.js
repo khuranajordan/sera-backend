@@ -77,16 +77,14 @@ const login = async (req, res) => {
     const {mobile, userisparent, password} = req.body;
     const user = await User.findOne({mobile});
     if (!user) {
-      return res.status(202).json({message: 'Mobile number is not found'});
+      return res.status(401).json({message: 'Mobile number is not found'});
     }
 
-    // Check if password length is less than 8 characters
     if (password.length < 8) {
       return res
         .status(400)
         .json({message: 'Password length should be a minimum of 8 characters'});
     }
-
     const isMatch = await user.isPasswordMatch(password);
 
     if (!isMatch) {
