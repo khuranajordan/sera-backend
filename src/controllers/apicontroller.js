@@ -489,9 +489,9 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
     (_, i) => `sera${String(10 + i).padStart(3, '0')}`,
   );
   if (validPromoCodes.includes(promoCode)) {
-    if (packageId === 'Quarterly') {
+    if (packageId === 'quarterly') {
       durationIncrease = 30;
-    } else if (packageId === 'Yearly') {
+    } else if (packageId === 'yearly') {
       durationIncrease = 180;
     }
   } else {
