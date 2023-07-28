@@ -18,6 +18,8 @@ const create = async (req, res) => {
       isSubscribed,
       device_token
     } = req.body;
+
+    // Check if all required fields are provided, except for isSubscribed
     if (
       !name ||
       !email ||
@@ -25,17 +27,21 @@ const create = async (req, res) => {
       !userisparent ||
       !mobile ||
       !isEmailVerified ||
-      !isSubscribed ||
       !device_token
     ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
+
+    // Check if email is already taken
     if (await User.isEmailTaken(email)) {
       return res.status(400).json({ message: 'Email is already taken' });
     }
+
+    // Check if mobile number is already taken
     if (await User.isMobileTaken(mobile)) {
       return res.status(400).json({ message: 'Mobile number is already taken' });
     }
+
     const user = new User({
       name,
       email,
@@ -46,8 +52,14 @@ const create = async (req, res) => {
       isSubscribed,
       device_token,
     });
-    await user.save();
-    const token = jwt.sign({ id: user.id }, 'abcdefghijklmn'); 
+
+    try {
+      await user.save();
+    } catch (error) {
+      throw new Error('Error creating user');
+    }
+
+    const token = jwt.sign({ id: user.id }, 'your_secret_key'); // Replace 'your_secret_key' with your actual secret key
     const response = {
       code: 200,
       message: 'User created successfully',
@@ -56,6 +68,7 @@ const create = async (req, res) => {
         token: token,
       },
     };
+
     return res.status(200).json(response);
   } catch (error) {
     console.error(error.message);

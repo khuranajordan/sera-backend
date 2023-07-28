@@ -79,7 +79,7 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-        isSubscribed: {
+   isSubscribed: {
       type: Boolean,
       default: false,
     },
