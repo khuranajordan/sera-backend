@@ -489,9 +489,9 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
     (_, i) => `sera${String(10 + i).padStart(3, '0')}`,
   );
   if (validPromoCodes.includes(promoCode)) {
-    if (packageId === 'quarterly') {
+    if (packageId === 'Quarterly') {
       durationIncrease = 30;
-    } else if (packageId === 'yearly') {
+    } else if (packageId === 'Yearly') {
       durationIncrease = 180;
     }
   } else {
@@ -513,10 +513,11 @@ const calculateSubscriptionAmount = (packageId, promoCode) => {
 
 const postSubscription = async (req, res) => {
   try {
-    const {packageId, promoCode} = req.body;
-
-    const {totalAmount, packageAmount, duration, maxDevices} =
-      await calculateSubscriptionAmount(packageId, promoCode);
+    const { packageId, promoCode } = req.body;
+    const lowerCasePackageId = packageId.toLowerCase();
+    
+    const { totalAmount, packageAmount, duration, maxDevices } =
+      await calculateSubscriptionAmount(lowerCasePackageId, promoCode);
     res.status(200).json({
       status: 200,
       message: 'Success',
