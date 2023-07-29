@@ -131,7 +131,7 @@ const AppUsageGetting = async (req, res) => {
   try {
     const {pairingcodeforchild, childId} = req.body;
     const data = await PairingModel.find({pairingcodeforchild, childId});
-
+    console.log(data)
     if (data.length === 0) {
       return res
         .status(404)

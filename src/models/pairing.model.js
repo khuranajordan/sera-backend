@@ -45,6 +45,6 @@ const pairingSchema = new mongoose.Schema({
 });
 
 // Create the model
-const PairingModel = mongoose.model('Pairing', pairingSchema);
+const PairingModel = mongoose.model('PairingModel', pairingSchema);
 
 module.exports = PairingModel;
