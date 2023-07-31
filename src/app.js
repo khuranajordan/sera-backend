@@ -12,6 +12,7 @@ const morgan = require('./config/morgan');
 const {jwtStrategy} = require('./config/passport');
 const {authLimiter} = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
+const router = require('./routes/v2');
 const {errorConverter, errorHandler} = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const path = require('path');
@@ -68,7 +69,7 @@ if (config.env === 'production') {
 
 // v1 api routes
 app.use('/v1', routes);
-
+app.use('/v2',router)
 app.get('/test', (req, res) => {
   res.send('Test Success');
 });

@@ -1,25 +1,14 @@
 const express = require('express');
-const authRoute = require('./auth.route');
-const userRoute = require('./user.route');
-const docsRoute = require('./docs.route');
-const apiRoute = require('./apiroute');
+const testRoute = require('./test.route.js')
 const config = require('../../config/config');
-
+const docsRoute = require('./docs.route');
 const router = express.Router();
 
 const defaultRoutes = [
-  {
-    path: '/auth',
-    route: authRoute,
-  },
-  {
-    path: '/users',
-    route: userRoute,
-  },
-  {
-    path: '/api',
-    route: apiRoute,
-  },
+    {
+        path: '/test',
+        route: testRoute,
+      },
 ];
 
 const devRoutes = [
