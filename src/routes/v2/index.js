@@ -1,18 +1,17 @@
 const express = require('express');
-const testRoute = require('./test.route.js')
+const testRoute = require('./authenticate.route.js')
 const config = require('../../config/config');
 const docsRoute = require('./docs.route');
 const router = express.Router();
 
 const defaultRoutes = [
     {
-        path: '/test',
+        path: '/api',
         route: testRoute,
       },
 ];
 
 const devRoutes = [
-  // routes available only in development mode
   {
     path: '/docs',
     route: docsRoute,
