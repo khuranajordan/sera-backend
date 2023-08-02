@@ -19,11 +19,11 @@ const parent_register = async (req, res) => {
 
       let emails = await User.isEmailTaken(email)
       if (emails) {
-        return res.status(403).json({ message: 'Email is already taken' });
+        return res.status(401).json({ message: 'Email is already taken' });
       }
       let passworderror =await User.isMobileTaken(mobile)
       if (passworderror) {
-        return res.status(403).json({ message: 'Mobile number is already taken' });
+        return res.status(401).json({ message: 'Mobile number is already taken' });
       }
   
       const user = new User({
@@ -66,17 +66,17 @@ const parent_register = async (req, res) => {
       const { mobile, password,device_token } = req.body;
 
       if (!device_token ){
-        return res.status(403).json({ message: ' device_token are required' });
+        return res.status(401).json({ message: ' device_token are required' });
       }
   
       // Check if password and confirmPassword are the same
       if (!password) {
-        return res.status(403).json({ message: 'Passwords do not match' });
+        return res.status(401).json({ message: 'Passwords do not match' });
       }
   
       const user = await User.findOne({ mobile });
       if (!user) {
-        return res.status(403).json({ message: 'Mobile number is not found' });
+        return res.status(401).json({ message: 'Mobile number is not found' });
       }
   
       if (password.length < 8) {
@@ -88,7 +88,7 @@ const parent_register = async (req, res) => {
       const isMatch = await user.isPasswordMatch(password);
   
       if (!isMatch) {
-        return res.status(403).json({ message: 'Password does not match' });
+        return res.status(401).json({ message: 'Password does not match' });
       }
   
       await User.updateOne(
@@ -116,7 +116,7 @@ const parent_register = async (req, res) => {
       return res.status(200).json(response);
     } catch (error) {
       console.log(error.message, 'error');
-      return res.status(400).json({ message: error.message });
+      return res.status(401).json({ message: error.message });
     }
   };
 
@@ -147,12 +147,12 @@ const parent_register = async (req, res) => {
       let {mobile, password} = req.body;
       if (password.length < 8) {
         return res
-          .status(403)
+          .status(401)
           .json({message: 'Password length should be a minimum of 8 characters'});
       }
       if (!password ) {
         return res
-          .status(403)
+          .status(401)
           .json({message: 'Password  do not match'});
       }
       const user = await User.findOne({mobile});
