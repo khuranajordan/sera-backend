@@ -67,7 +67,7 @@ const userSchema = mongoose.Schema(
           return /^[0-9]{10}$/.test(value);
         },
         message:
-          'Invalid mobile number. Mobile number must contain exactly 10 digits.',
+          'mobile number must contain exactly 10 digits and only contain number.',
       },
     },
     role: {
