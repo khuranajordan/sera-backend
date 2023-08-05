@@ -171,7 +171,21 @@ const parent_register = async (req, res) => {
       return res.status(500).json(error.message);
     }
   };
-
+  const getAllUser = async (req, res) => {
+    try {
+      const users = await User.find();
+      const response = {
+        code: 200,
+        message: 'success',
+        data: users,
+      };
+  
+      return res.status(200).json(response);
+    } catch (error) {
+      console.error(error.message); // Log the error for debugging purposes.
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
 
   module.exports = {
     parent_register,
